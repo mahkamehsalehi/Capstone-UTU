@@ -1,0 +1,32 @@
+Loading and Initializing:
+The code loads image data from a file (../data/imgs.mat).
+It extracts some information about the size of the images (ni and nj), as well as information about the structure of the image data (imgs, pss, corners, etc.).
+Global variables (rMax, thetaMax, a, b, c) are initialized, presumably defining some parameters for subsequent calculations.
+
+Coordinate Mapping:
+The code defines mappings (r12 and r21) between different coordinate systems (r1 to r2), involving trigonometric functions.
+It then applies these mappings to transform some data (pss1) from one coordinate system to another (pss2).
+
+Orientation Uniqueness Management:
+The code manages uniqueness of orientation categories (ori) across a collection of images.
+It ensures that each orientation category is unique in the entire dataset.
+
+Curve Fitting:
+The code fits curves to the transformed data (pss2) using some function fitCSC1.
+It calculates some parameters (aPixel, h, e, flag) and stores the fitted curves in a new structure (pss3).
+It also collects information about the fitted curves in a matrix (CSCs).
+
+Common Axis Point Selection:
+The code selects a common axis point for each orientation category.
+It visualizes the initial matches of these points.
+
+Histogram and Distribution Visualization:
+The code visualizes histograms and distributions related to the fitted curves and their parameters.
+
+Looping Over Images:
+The code seems to loop over three images (for k = 1:3), repeating the above steps for each image.
+
+Final Optimization:
+The last comment suggests that a final fit is performed, involving one optimization task per category group.
+
+The overall purpose of the code is likely to analyze and characterize curves in images, with a focus on orientation categories and fitting curves to transformed data. The final optimization task may be aimed at refining the fitting results or obtaining some specific parameters.
