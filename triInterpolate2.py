@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 # Output
 # v(q) = interpolated vector values at q \in qs 
 
-def triInterpolate2(DT, vs, qs):
+def tri_interpolate2(DT, vs, qs):
 
     ti1 = DT.find_simplex(qs)      # Indices of simplices for each point
     inds1 = np.where(ti1 >= 0)[0]  # Points within the mesh = convex hull
@@ -53,12 +53,13 @@ ps = np.random.rand(10, 2)  # Example point cloud
 vs = np.random.rand(len(ps), 2)  # Example vector values at points
 DT = Delaunay(ps)
 qs = np.random.rand(5, 2)  # Example query points
-
+'''
 # Call the function
-vqs = triInterpolate2(DT, vs, qs)
+vqs = tri_interpolate2(DT, vs, qs)
 
 # Visualize the result
 plt.plot(ps[:, 0], ps[:, 1], 'bo')  # Plot point cloud
 plt.plot(qs[:, 0], qs[:, 1], 'rx')  # Plot query points
 plt.quiver(qs[:, 0], qs[:, 1], vqs[:, 0], vqs[:, 1], color='g', angles='xy', scale_units='xy', scale=0.1)
 plt.show()
+'''

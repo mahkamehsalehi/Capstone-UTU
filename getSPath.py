@@ -2,7 +2,7 @@
 
 import numpy as np
 
-def getSPath(p1, v1, l12, kappa1, kappa2):
+def get_S_path(p1, v1, l12, kappa1, kappa2):
     # Calculate step size
     n=100
     dl = l12 / n

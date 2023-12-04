@@ -4,7 +4,7 @@ def map_pixels(ps1, r12, c, sz, r_max):
     # mapPixels maps pixels using an equisolid fisheye projection model
     # ps2 = mapPixels(ps1, r12, c, sz, r_max)
 	
-	r12 = lambda r1 : 2*np.arcsin(a * r1) * b
+    r12 = lambda r1 : 2*np.arcsin(a * r1) * b
     n = ps1.shape[0]
     a_shift = np.ones((n, 1)) * c
     rel_ps = ps1 - a_shift

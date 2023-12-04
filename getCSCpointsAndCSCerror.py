@@ -2,7 +2,7 @@
 import numpy as np  # Importing Numpy for numerical operations
 from scipy.spatial import cKDTree  # Importing SciPy's KDTree for nearest neighbour search
 
-def getCSCpoints(aPixel, h):
+def get_CSC_points(aPixel, h):
     """
     Function to generate the Cone Spherical Coordinates (CSC) points in a 3D unit sphere.
 
@@ -63,7 +63,7 @@ def getCSCpoints(aPixel, h):
 
     return ps  # Return pixel coordinates on CSC
 
-def getCSCerror(aPixel, h, ps):
+def get_CSC_error(aPixel, h, ps):
     """
     Function to compute the error in converting a given set of pixels from image space to Cone Spherical Coordinates (CSC).
 
@@ -77,7 +77,7 @@ def getCSCerror(aPixel, h, ps):
         l (int): Number of pixels in original image space
     """
 
-    cps = getCSCpoints(aPixel, h)  # Generate CSC points for given input pixel coordinates
+    cps = get_CSC_points(aPixel, h)  # Generate CSC points for given input pixel coordinates
 
     tree = cKDTree(cps)  # Construct KDTree from CSC points
     ds, _ = tree.query(ps, k=1)  # Compute distances of original pixels to nearest neighbour in CSC
