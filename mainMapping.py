@@ -61,7 +61,7 @@ nq = qs.shape[0]
 
 # Use Delaunay triangulation (DT) to interpolate the smoothed vector field (us12) at query points qs
 DT = Delaunay(ps1) # Limited by the convex hull
-vs12dense = tri_Interpolate_2(DT, us12, qs)
+vs12dense = tri_interpolate_2(DT, us12, qs)
 nv = vs12dense.shape[0] # All pixels generalized
 
 
