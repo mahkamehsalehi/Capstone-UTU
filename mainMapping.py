@@ -2,10 +2,10 @@ import numpy as np
 from scipy.spatial import Delaunay, distance
 import matplotlib.pyplot as plt
 
-from triInterpolate2 import triInterpolate2
+from triInterpolate2 import tri_interpolate_2
 from generateViewPixels import generative_view_pixels
 from bump import bump
-
+from generateViewPixels import generate_view_pixels
 
 # Load matrix v from file
 fIn = '../data/v.txt'
@@ -56,12 +56,12 @@ us12 = Vn @ Vn.T @ vs12
 # Generalization to all pixes in img1 (the view circle)
 # qs = pixel coordinates = view area pixels
 # inds1 = qs' corresponding indices = indices of the view area pixels
-inds1, qs = generateViewPixels(c, rMax, ni, nj)
+inds1, qs = generate_view_pixels(c, rMax, ni, nj)
 nq = qs.shape[0]
 
 # Use Delaunay triangulation (DT) to interpolate the smoothed vector field (us12) at query points qs
 DT = Delaunay(ps1) # Limited by the convex hull
-vs12dense = triInterpolate2(DT, us12, qs)
+vs12dense = tri_Interpolate_2(DT, us12, qs)
 nv = vs12dense.shape[0] # All pixels generalized
 
 

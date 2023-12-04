@@ -7,7 +7,7 @@ import numpy as np
 from scipy.spatial import Delaunay, delaunay_plot_2d
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
-def tri_interpolate1(DT, qs, fs):
+def tri_interpolate_1(DT, qs, fs):
 	# DT = a Delaunay triangulation object
     # triInterpolate returns interpolated scalar values f(q) at q \in qs
     # fs defined at points DT.Points

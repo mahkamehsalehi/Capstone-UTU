@@ -1,9 +1,11 @@
-from insertP import insertP
-from getSegment import getSegment
+import os
+
+from insertP import insert_p
+from getSegment import get_segment
 from getP import get_p
 from showImg import show_img
 from getCorners import get_corners
-from get3Imgs import get3Imgs
+from get3Imgs import get_3_imgs
 
 # !!!
 # Data save and load not adjusted! They may not correspond to the Matlab
@@ -24,7 +26,7 @@ if os.path.exists(fData):
 	imgs = load(fData)['imgs']
 else:
     print('reading 3 frames')
-	imgs = get3Imgs(72)
+	imgs = get_3_imgs(72)
     save(fData, 'imgs')
 
 dMax = 100  # point tolerance for editing
@@ -43,7 +45,7 @@ for k0 in range(3):
 plt.show()
 
 # Figure 2
-showImg(imgs[k]['img1'], k, imgs[k]['pss'])
+show_img(imgs[k]['img1'], k, imgs[k]['pss'])
 
 quitModus = 8 # Quits the drawing
 modus = 0 # Defines what operations are performed within the image depending on the user's choice
@@ -81,7 +83,7 @@ while modus != quitModus:
 		# elif modus == 2:  # remove curve
 			print('2 curve-: a far point --> no action')
 			p = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
-			flag, i0, j0 = getP(pss, p, dMax)
+			flag, i0, j0 = get_p(pss, p, dMax)
 			if flag:
 				ps = pss[i0]['ps']
 				plt.plot(ps[:, 0], ps[:, 1], 'ro')
@@ -97,14 +99,14 @@ while modus != quitModus:
 		# elif modus == 3:  # add point
 			print('3 add point at the center of the nearest segment')
 			pNew = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
-			flag, i, j = getSegment(pss, pNew, dMax)
+			flag, i, j = get_segment(pss, pNew, dMax)
 			if flag:
 				ps = pss[i]['ps']
 				p1, p2 = ps[j, :], ps[j + 1, :]
 				plt.plot([p1[0], p2[0]], [p1[1], p2[1]], 'bo')
 				plt.plot(pNew[0], pNew[1], 'go')
 				plt.plot([p1[0], pNew[0], p2[0]], [p1[1], pNew[1], p2[1]], 'g')
-				pss[i]['ps'] = insertP(ps, j, pNew)
+				pss[i]['ps'] = insert_p(ps, j, pNew)
 				changesMade = 1
 			imgs[k]['pss'] = pss
 		
@@ -112,7 +114,7 @@ while modus != quitModus:
 		# elif modus == 4:  # remove point
 			print('3 remove the nearest point')
 			pOld = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
-			flag, i, j = getP(pss, pOld, dMax)
+			flag, i, j = get_p(pss, pOld, dMax)
 			if flag:
 				plt.plot(pOld[0], pOld[1], 'ro')
 				ps = pss[i]['ps']
@@ -125,7 +127,7 @@ while modus != quitModus:
 		# elif modus == 5:  # move point
 			print('3 move the nearest point')
 			pNew = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
-			flag, i, j = getP(pss, pNew, dMax)
+			flag, i, j = get_p(pss, pNew, dMax)
 			if flag:
 				pOld = pss[i]['ps'][j, :]
 				pss[i]['ps'][j, :] = pNew
@@ -136,12 +138,12 @@ while modus != quitModus:
 
 		case '6': # Refresh and save img
 		# elif modus == 6:  # refresh + save img
-			showImg(imgs[k]['img1'], k, imgs[k]['pss'])
+			show_img(imgs[k]['img1'], k, imgs[k]['pss'])
 			if int(input('is it ok to save (0/1) ')):
 				# If changes have been made, adds crosspoints into the image
 				if changesMade:
 					print('img %d, adding the crosspoints' % k)
-					imgs[k]['corners'] = getCorners(imgs[k]['pss'])
+					imgs[k]['corners'] = get_corners(imgs[k]['pss'])
 				print('saving img %d' % k)
 				save(fData, 'imgs')
 				# (*) ginput() coordinates must be fixed in the next phase
@@ -158,7 +160,7 @@ while modus != quitModus:
 			while orientationMode != 0:
 				print('setting orientation, %d' % orientationMode)
 				pNew = np.array(plt.ginput(1))  # note: ginput() has weird coordinate system (*)
-				flag, i, j = getP(pss, pNew, dMax)
+				flag, i, j = get_p(pss, pNew, dMax)
 				if flag:
 					imgs[k]['pss'][i]['ori'] = orientationMode
 				else:

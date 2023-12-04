@@ -1,3 +1,4 @@
+from getCrossing import get_crossing
 
 def get_corners(pss):  # This function is used to find all corners in a given set of polygons
     corners = []       # This list will hold information about all corner points found

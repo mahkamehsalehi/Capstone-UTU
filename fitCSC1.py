@@ -1,5 +1,9 @@
 import numpy as np
 from scipy.optimize import fmin
+from densifyCurve import densify_curve
+from funAdapter import fun_adapter
+from getCSCpointsAndCSCerror import get_CSC_error
+from rndUnitDiskP import rnd_unit_disk_p
 
 #!!!Requires densify_curve, rnd_unit_disk_p, get_csc_error and fun_adapter functions!!!
 
@@ -20,7 +24,7 @@ def fit_csc1(ps):
     for _ in range(n_tries):
         a_pixel = c + rnd_unit_disk_p() * rMax
         h = 0.0
-        e, l = get_csc_error(a_pixel, h, ps)
+        e, l = get_CSC_error(a_pixel, h, ps)
 
         if e < e_min:
             e_min = e

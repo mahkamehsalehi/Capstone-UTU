@@ -1,3 +1,5 @@
+from getCSCpointsAndCSCerror import get_csc_error
+
 def fun_adapter(x, ps):
     # fun_adapter helps to use fminsearch()
     # e = fun_adapter(x, ps)

@@ -1,4 +1,4 @@
-def getCrossing(ps1, ps2):
+def get_crossing(ps1, ps2):
     """
     Finds a single intersection point of two curves represented by ps1 and ps2.
     Returns an empty list or a valid intersection point.

@@ -2,6 +2,9 @@ import sys, os
 from scipy.io import loadmat
 import numpy as np
 import matplotlib.pyplot as plt
+from mapPixels import map_pixels
+from getCSCpointsAndCSCerror import get_CSC_points
+from getCSCpointsAndCSCerror import fit_CSC_1
 
 # Inputs
 # r1, r2 ?
@@ -79,7 +82,7 @@ for k in range(3):  # 3 images
     pss3 = [{'ps': [], 'ori': 0, 'corners': []} for _ in range(nCurves)]  # ideal fit of GC curves to pss2
 
     for i in range(nCurves):
-        pss2[i]['ps'] = mapPixels(pss1[i]['ps'], r12, c, sz, rMax)
+        pss2[i]['ps'] = map_pixels(pss1[i]['ps'], r12, c, sz, rMax)
         pss2[i]['ori'] = pss1[i]['ori']
 
     if 1:
@@ -108,8 +111,8 @@ for k in range(3):  # 3 images
         ori = pss2[i]['ori']
 
         if ps:
-            aPixel, h, e, flag = fitCSC1(ps)
-            cps = getCSCpoints(aPixel, h)
+            aPixel, h, e, flag = fit_CSC_1(ps)
+            cps = get_CSC_points(aPixel, h)
             pss3[i]['ps'] = cps
             pss3[i]['ori'] = ori
 
