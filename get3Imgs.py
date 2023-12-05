@@ -1,7 +1,7 @@
 import cv2
 
-def get3Imgs(m):
-   vIn = '../data/printteri.mov'
+def get_3_imgs(m):
+   vIn = './data/printteri.mov'
    v = cv2.VideoCapture(vIn)
 
    imgs = {'img0': [], 'img1': [], 'pss': [], 'corners': []}
@@ -9,6 +9,7 @@ def get3Imgs(m):
    # Read the first frame
    ret, img = v.read()
    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+   print('here')
    imgs['img0'].append(img)
    imgs['img1'].append(cv2.Canny(img, 0.03, 1.8))
    imgs['pss'].append([])

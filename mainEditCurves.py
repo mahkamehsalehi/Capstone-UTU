@@ -1,11 +1,14 @@
 import os
 
+import cv2
+
 from insertP import insert_p
 from getSegment import get_segment
 from getP import get_p
 from showImg import show_img
 from getCorners import get_corners
 from get3Imgs import get_3_imgs
+from scipy.io import loadmat, savemat
 
 # !!!
 # Data save and load not adjusted! They may not correspond to the Matlab
@@ -18,24 +21,26 @@ from get3Imgs import get_3_imgs
 import numpy as np
 import matplotlib.pyplot as plt
 
-fData = '../data/imgs.mat' # Change the file path!
+fData = './data/imgs.mat' # Change the file path!
 
 # Initializes the data by either loading it from a file (imgs.mat) or generating it 
 # using the get3Imgs function
-if os.path.exists(fData):
-	imgs = load(fData)['imgs']
+if (os.path.exists(fData)):
+	imgs = loadmat(fData)['imgs']
+	print(type(imgs[0]['img0']))
 else:
-    print('reading 3 frames')
-	imgs = get_3_imgs(72)
-    save(fData, 'imgs')
+    print('File does not exist, reading 3 frames')
+    imgs = get_3_imgs(72)
+    savemat(fData, {'imgs': imgs})
 
 dMax = 100  # point tolerance for editing
 k = 3  # img number
 
+
 # Figure 1
 # Visualizes the img0 and img1. Shows 6(?) images - 3 per img.
 for k0 in range(3):
-    plt.subplot(2, 3, k0 + 0) # ChatGPT gave k0 + 1
+    plt.subplot(2, 3, k0 + 1) # ChatGPT gave k0 + 1 !!!ValueError: num must be 1 <= num <= 6, not 0 with k0 + 0!!!
     plt.imshow(imgs[k0]['img0'])
     plt.title(str(k0))
     plt.subplot(2, 3, k0 + 3) # ChatGPT gave k0 + 4
@@ -62,7 +67,7 @@ while modus != quitModus:
             print('choose again')
 
     pss = imgs[k]['pss']
-	match modus:
+match modus:
 		case 1: # add curve
 		#if modus == 1:  # add curve
 			print('1 curve+: press enter --> done')
@@ -145,7 +150,7 @@ while modus != quitModus:
 					print('img %d, adding the crosspoints' % k)
 					imgs[k]['corners'] = get_corners(imgs[k]['pss'])
 				print('saving img %d' % k)
-				save(fData, 'imgs')
+				savemat(fData, {'imgs': imgs})
 				# (*) ginput() coordinates must be fixed in the next phase
 				# next phase is mainFit.m
 
