@@ -21,16 +21,15 @@ from scipy.io import loadmat, savemat
 import numpy as np
 import matplotlib.pyplot as plt
 
-fData = './data/imgs.mat' # Change the file path!
+fData = 'data/imgs.mat' # Change the file path!
 
 # Initializes the data by either loading it from a file (imgs.mat) or generating it 
 # using the get3Imgs function
 if (os.path.exists(fData)):
 	imgs = loadmat(fData)['imgs']
-	print(type(imgs[0]['img0']))
 else:
     print('File does not exist, reading 3 frames')
-    imgs = get_3_imgs(72)
+    imgs = get_3_imgs(3)
     savemat(fData, {'imgs': imgs})
 
 dMax = 100  # point tolerance for editing
@@ -39,12 +38,12 @@ k = 3  # img number
 
 # Figure 1
 # Visualizes the img0 and img1. Shows 6(?) images - 3 per img.
-for k0 in range(3):
-    plt.subplot(2, 3, k0 + 1) # ChatGPT gave k0 + 1 !!!ValueError: num must be 1 <= num <= 6, not 0 with k0 + 0!!!
-    plt.imshow(imgs[k0]['img0'])
+for k0 in range(len(imgs)): # Use len(imgs) to get the number of elements in imgs list
+    plt.subplot(2, 3, k0 + 1) 
+    plt.imshow(imgs[k0]['img0'], cmap='gray') # Added 'cmap='gray'' for grayscale image
     plt.title(str(k0))
-    plt.subplot(2, 3, k0 + 3) # ChatGPT gave k0 + 4
-    plt.imshow(imgs[k0]['img1'])
+    plt.subplot(2, 3, k0 + 4) # Changed from k0 + 3 to k0 + 4
+    plt.imshow(imgs[k0]['img1'], cmap='gray') # Added 'cmap='gray'' for grayscale image
     plt.title(str(k0))
 
 plt.show()
