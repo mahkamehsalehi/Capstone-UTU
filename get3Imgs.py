@@ -2,7 +2,7 @@ import cv2
 from matplotlib import pyplot as plt
 
 def get_3_imgs(m):
-    vIn = 'data/printteri.mov'
+    vIn = './data/printteri.mov'
     cap = cv2.VideoCapture(vIn) 
     
     imgs= []

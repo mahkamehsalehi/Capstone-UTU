@@ -21,12 +21,13 @@ from scipy.io import loadmat, savemat
 import numpy as np
 import matplotlib.pyplot as plt
 
-fData = 'data/imgs.mat' # Change the file path!
+fData = './data/imgs.mat' # Change the file path!
 
 # Initializes the data by either loading it from a file (imgs.mat) or generating it 
 # using the get3Imgs function
 if (os.path.exists(fData)):
 	imgs = loadmat(fData)['imgs']
+	print('IMAGES: ',imgs)
 else:
     print('File does not exist, reading 3 frames')
     imgs = get_3_imgs(3)

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from fitCSC1 import fit_csc1
-from getCSCpointsAndCSCerror import getCSCpoints
+from getCSCpointsAndCSCerror import get_CSC_points
 from getCrossing2 import getCrossing
 from getOris import getNewOris
 from main1 import map_pixels
@@ -11,7 +11,7 @@ import os.path
 
 # 1) Initial values for the map
 # 1.1) Size of the frames
-fIn = '../data/imgs.mat'
+fIn = 'data/imgs.mat'
 if os.path.exists(fIn):
     imgs1 = loadmat(fIn)['imgs']
     sz = imgs1[0]['img1'].shape
@@ -98,7 +98,7 @@ for k in range(3):  # 3 images
 
         if ps:
             aPixel, h, e, flag = fit_csc1(ps)  # Assuming fitCSC1 exists
-            cps = getCSCpoints(aPixel, h)  # Assuming getCSCpoints exists
+            cps = get_CSC_points(aPixel, h)  # Assuming getCSCpoints exists
             pss3[i]['ps'] = cps
             pss3[i]['ori'] = ori
             CSCs[i, :] = [aPixel, h, ori]
