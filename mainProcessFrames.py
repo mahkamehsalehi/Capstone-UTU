@@ -1,16 +1,14 @@
 import numpy as np
 import cv2
-
+import scipy.io
 # Load pixel mapping data
-fIn = '../data/pixelMap.npy'
-try:
-    data = np.load(fIn, allow_pickle=True).item()
-    inds1 = data['inds1']
-    inds2 = data['inds2']
-    ws = data['ws']
-except FileNotFoundError:
-    print('Run mainMapping.m first (to get the pixel mapping found)')
-    raise
+fIn= 'data/pixelMap.mat'
+data = scipy.io.loadmat(fIn)
+inds1 = data['inds1']
+inds1 = inds1.flatten() - 1 # MATLAB indexing starts from 1
+inds2 = data['inds2']
+inds2 = inds2 - 1 # MATLAB indexing starts from 1
+ws = data['ws']
 
 # k: number of reference pixels.
 # k == 1: some granularity
@@ -25,8 +23,8 @@ if k == 2 or k == 3:
         ws[j, :k] = ws[j, :k] / np.sum(ws[j, :k])
 
 # Video input and output
-vIn = '../data/printteri.mov'
-vOut = '../data/output.avi'
+vIn = 'data/printteri.mov'
+vOut = 'data/output.avi'
 v1 = cv2.VideoCapture(vIn)
 fps = v1.get(cv2.CAP_PROP_FPS)
 v2 = cv2.VideoWriter(vOut, cv2.VideoWriter_fourcc(*'XVID'), fps, (int(v1.get(3)), int(v1.get(4))))
@@ -40,14 +38,17 @@ while v1.isOpened():
     ni, nj = img1.shape
     img1 = img1.reshape(1, ni * nj)
     img2 = img1.copy()
-
     if k == 1:
-        img2[0, inds1] = img1[0, inds1[inds2[:, 0]]]
-    else:  # k == 2,3,4
-        temp = np.zeros((1, nq))
-        for i in range(k):
-            temp = temp + ws[:, k-1] * img1[0, inds1[inds2[:, k-1]]]
-        img2[0, inds1] = temp
+        img2[0, inds1] = img1[0, inds2[:, 0]]
+    else:
+    # Iterate over the indices to avoid large memory allocation
+     for i in range(nq):
+          weighted_sum = 0
+          for j in range(k):
+              ind = inds2[i, j]  # Get the index for the current reference pixel
+              weight = ws[i, j]  # Corresponding weight
+              weighted_sum += weight * img1[0, inds1[ind]]  # Weighted pixel value
+          img2[0, inds1[i]] = weighted_sum   
 
     img2 = img2.reshape((nj, ni)).T
     cv2.imshow('Output', img2)
