@@ -151,7 +151,8 @@ match modus:
 					print('img %d, adding the crosspoints' % k)
 					imgs[k]['corners'] = get_corners(imgs[k]['pss'])
 				print('saving img %d' % k)
-				savemat(fData, {'imgs': imgs}, format='5', do_compression=True)
+				with open(fData, 'wb') as f:
+					pickle.dump(imgs, f)
 				# (*) ginput() coordinates must be fixed in the next phase
 				# next phase is mainFit.m
 

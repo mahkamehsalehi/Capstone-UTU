@@ -1,3 +1,4 @@
+import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -11,9 +12,11 @@ import os.path
 
 # 1) Initial values for the map
 # 1.1) Size of the frames
-fIn = 'data/imgs.mat'
+fIn = './data/imgs.mat'
 if os.path.exists(fIn):
-    imgs1 = loadmat(fIn)['imgs']
+    with open(fIn, 'rb') as f:
+        imgs1 = pickle.load(f)
+    
     sz = imgs1[0]['img1'].shape
     ni, nj = sz[0], sz[1]
 else:
