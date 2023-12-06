@@ -30,25 +30,37 @@ if (os.path.exists(fData)):
 	
 else:
     print('File does not exist, reading 3 frames')
-    imgs = get_3_imgs(3)
+    imgs = get_3_imgs(34)
     with open(fData, 'wb') as f:
 	    pickle.dump(imgs, f)  
 	
 
 dMax = 100  # point tolerance for editing
-k = 3  # img number
+k = 2  # img number was 3 but python index starts from 0 so changed to 2 
 
 # Figure 1
 # Visualizes the img0 and img1. Shows 6(?) images - 3 per img.
-for k0 in range(len(imgs)): # Use len(imgs) to get the number of elements in imgs list
-    plt.subplot(2, 3, k0 + 1) 
-    plt.imshow(imgs[k0]['img0'], cmap='gray') # Added 'cmap='gray'' for grayscale image
-    plt.title(str(k0))
-    plt.subplot(2, 3, k0 + 3) # Changed from k0 + 3 to k0 + 4
-    plt.imshow(imgs[k0]['img1'], cmap='gray') # Added 'cmap='gray'' for grayscale image
-    plt.title(str(k0))
 
+# Plotting each image in a subplot
+for i, img_dict in enumerate(imgs):
+    plt.subplot(len(imgs), 2, i*2+1)
+    plt.imshow(img_dict['img0'], cmap='gray')
+    plt.title('Image 0')
+    
+    plt.subplot(len(imgs), 2, i*2+2)
+    plt.imshow(img_dict['img1'], cmap='gray')
+    plt.title('Image 1')
 plt.show()
+
+# Old plotting
+
+##for k0 in range(len(imgs)): # Use len(imgs) to get the number of elements in imgs list
+##    plt.subplot(2, 3, k0 + 1) 
+##    plt.imshow(imgs[k0]['img0'], cmap='gray') # Added 'cmap='gray'' for grayscale image
+##    plt.title(str(k0))
+##    plt.subplot(2, 3, k0 + 3) # Changed from k0 + 3 to k0 + 4
+##    plt.imshow(imgs[k0]['img1'], cmap='gray') # Added 'cmap='gray'' for grayscale image
+##    plt.title(str(k0))
 
 # Figure 2
 show_img(imgs[k]['img1'], k, imgs[k]['pss'])
