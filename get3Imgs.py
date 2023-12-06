@@ -1,41 +1,33 @@
 import cv2
-from matplotlib import pyplot as plt
+import numpy as np
 
 def get_3_imgs(m):
     vIn = './data/printteri.mov'
-    cap = cv2.VideoCapture(vIn) 
+    cap = cv2.VideoCapture(vIn)
     
+    if not cap.isOpened():  # Check if video file opened successfully
+        print("Error opening video file")
+        return []
+
     imgs= []
-    ret, img = cap.read()
-    if img is None:
-        return imgs # No frames read or error occurred
-        
-    sz = img.shape[:2]
-    img0 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img1 = ~cv2.Canny(img0, 30, 100)
-    imgs.append({'img0': img0, 'img1': img1, 'pss': [], 'corners': []})
+    ret, frame = cap.read()
+    img0 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    img1 = ~cv2.Canny(img0, 3, 1.8)
+    imgs.append({'img0': img0.tolist(), 'img1': img0.tolist(), 'pss': [], 'corners': []})
     
-    counter = int(cap.get(cv2.CAP_PROP_POS_FRAMES)) # Get current frame position
-    while cap.isOpened():
-        ret, img = cap.read()
-        if not ret:
+    counter = m if cap.get(cv2.CAP_PROP_FRAME_COUNT) > m else int(cap.get(cv2.CAP_PROP_FRAME_COUNT))  # Ensure m doesn't exceed the total number of frames in the video
+    
+    while True:
+        ret, frame = cap.read()
+        if not ret or counter == 0:  # If end of file is reached or all frames have been stored
             break
             
-        counter += int(cap.get(cv2.CAP_PROP_POS_FRAMES)) 
-        if counter == m:
-            if img is None: # Check if frame was read correctly
-                break
-                
-            img0 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            img1 = ~cv2.Canny(img0, 30, 100)
-            imgs.append({'img0': img0, 'img1': img1, 'pss': [], 'corners': []})
-            
-    if img is None: # Check after the loop to see if there was an error reading frames
-        return imgs 
+        counter -= 1
         
-    img0 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img1 = ~cv2.Canny(img0, 30, 100)
-    imgs.append({'img0': img0, 'img1': img1, 'pss': [], 'corners': []})
-    
+        img0 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        img1 = ~cv2.Canny(img0, 3, 1.8)
+        imgs.append({'img0': img0.tolist(), 'img1': img1.tolist(), 'pss': [], 'corners': []})
+            
     cap.release()
+    
     return imgs

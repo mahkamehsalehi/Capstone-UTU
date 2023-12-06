@@ -1,7 +1,5 @@
 import os
-
 import cv2
-
 from insertP import insert_p
 from getSegment import get_segment
 from getP import get_p
@@ -9,6 +7,7 @@ from showImg import show_img
 from getCorners import get_corners
 from get3Imgs import get_3_imgs
 from scipy.io import loadmat, savemat
+import pickle
 
 # !!!
 # Data save and load not adjusted! They may not correspond to the Matlab
@@ -21,21 +20,23 @@ from scipy.io import loadmat, savemat
 import numpy as np
 import matplotlib.pyplot as plt
 
-fData = './data/imgs.mat' # Change the file path!
+fData = './data/imgs.pkl' # Change the file path!
 
 # Initializes the data by either loading it from a file (imgs.mat) or generating it 
 # using the get3Imgs function
 if (os.path.exists(fData)):
-	imgs = loadmat(fData)['imgs']
-	print('IMAGES: ',imgs)
+	with open(fData, 'rb') as f:
+		imgs = pickle.load(f)
+	
 else:
     print('File does not exist, reading 3 frames')
     imgs = get_3_imgs(3)
-    savemat(fData, {'imgs': imgs})
+    with open(fData, 'wb') as f:
+	    pickle.dump(imgs, f)  
+	
 
 dMax = 100  # point tolerance for editing
 k = 3  # img number
-
 
 # Figure 1
 # Visualizes the img0 and img1. Shows 6(?) images - 3 per img.
@@ -43,7 +44,7 @@ for k0 in range(len(imgs)): # Use len(imgs) to get the number of elements in img
     plt.subplot(2, 3, k0 + 1) 
     plt.imshow(imgs[k0]['img0'], cmap='gray') # Added 'cmap='gray'' for grayscale image
     plt.title(str(k0))
-    plt.subplot(2, 3, k0 + 4) # Changed from k0 + 3 to k0 + 4
+    plt.subplot(2, 3, k0 + 3) # Changed from k0 + 3 to k0 + 4
     plt.imshow(imgs[k0]['img1'], cmap='gray') # Added 'cmap='gray'' for grayscale image
     plt.title(str(k0))
 
@@ -143,14 +144,14 @@ match modus:
 
 		case '6': # Refresh and save img
 		# elif modus == 6:  # refresh + save img
-			show_img(imgs[k]['img1'], k, imgs[k]['pss'])
+			show_img(imgs[1]['img1'], k, imgs[k]['pss'])
 			if int(input('is it ok to save (0/1) ')):
 				# If changes have been made, adds crosspoints into the image
 				if changesMade:
 					print('img %d, adding the crosspoints' % k)
 					imgs[k]['corners'] = get_corners(imgs[k]['pss'])
 				print('saving img %d' % k)
-				savemat(fData, {'imgs': imgs})
+				savemat(fData, {'imgs': imgs}, format='5', do_compression=True)
 				# (*) ginput() coordinates must be fixed in the next phase
 				# next phase is mainFit.m
 
