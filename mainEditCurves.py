@@ -73,14 +73,14 @@ changesMade = 0 # 1 if changes have been made and 0 if not
 # Registers keyinputs of the user. With this code the user can draw piecewise linear lines 
 # and corner points on top of the fisheye image
 while modus != quitModus:
-    modus = 0
-    while not 1 <= modus < quitModus + 1: # modus not in range(1, quitModus + 1):
-        modus = int(input('1: +curve, 2: -curve, 3: +point, 4: -point, 5: +-point, 6: refresh+save, 7: set orientation, 8: quit '))
-        if not 1 <= modus < quitModus + 1: # modus not in range(1, quitModus + 1):
-            print('choose again')
+	modus = 0
+	while not 1 <= modus < quitModus + 1: # modus not in range(1, quitModus + 1):
+		modus = int(input('1: +curve, 2: -curve, 3: +point, 4: -point, 5: +-point, 6: refresh+save, 7: set orientation, 8: quit '))
+		if not 1 <= modus < quitModus + 1: # modus not in range(1, quitModus + 1):
+			print('choose again')
 
-    pss = imgs[k]['pss']
-match modus:
+	pss = imgs[k]['pss']
+	match modus:
 		case 1: # add curve
 		#if modus == 1:  # add curve
 			print('1 curve+: press enter --> done')
