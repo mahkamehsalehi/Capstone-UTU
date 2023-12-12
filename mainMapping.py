@@ -1,15 +1,16 @@
 import numpy as np
 from scipy.spatial import Delaunay, distance
 import matplotlib.pyplot as plt
+import networkx as nx
 
 from triInterpolate2 import tri_interpolate_2
-from generateViewPixels import generative_view_pixels
-from bump import bump
 from generateViewPixels import generate_view_pixels
+from bump import bump
+
 
 # Load matrix v from file
-fIn = '../data/v.txt'
-fOut = '../data/pixelMap.npy'
+fIn = 'data/v.txt'
+fOut = 'data/pixelMap.npy'
 v = np.loadtxt(fIn) #  v == <<p1, v(p1)>,...> where v(p1)= p2 - p1
 ps1, vs12 = v[:, :2], v[:, 2:] # ps1 = points, vs12 = vector field
 
@@ -26,7 +27,7 @@ r12 = lambda r1: 2 * np.arcsin(a * r1) * b
 r21 = lambda r2: np.sin(r2 / b) / a
 
 # Get frame size ni x nj
-fIn = '../data/imgs.npy'
+fIn = 'data/imgs.npy'
 imgs1 = np.load(fIn, allow_pickle=True)
 sz = imgs1[0]['img1'].shape
 ni, nj = sz[0], sz[1]
@@ -44,7 +45,8 @@ nEigen = round(lambda_val * n)
 ls, tris = distance.cdist(ps1, ps1), Delaunay(ps1)
 l0 = np.mean(ls) # Mean distance between natural (Voronoi) neighbors
 # There is a version with [_,_,_,_]= ... , too
-L0, _, _, _ = getAdjacencyMatrix(tris.simplices, ps1, l0)
+L0, _, _, _ = nx.convert_matrix.to_pandas_dataframe(tris.simplices)
+# L0, _, _, _ = getAdjacencyMatrix(tris.simplices, ps1, l0)
 
 D, V = np.linalg.eig(L0)
 lambdas = np.diag(D)

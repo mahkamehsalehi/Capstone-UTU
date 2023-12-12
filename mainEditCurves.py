@@ -113,7 +113,7 @@ match modus:
 					imgs[k]['pss'] = []
 				changesMade = 1
 		
-		case '3': # Add point
+		case 3: # Add point
 		# elif modus == 3:  # add point
 			print('3 add point at the center of the nearest segment')
 			pNew = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
@@ -128,7 +128,7 @@ match modus:
 				changesMade = 1
 			imgs[k]['pss'] = pss
 		
-		case '4': # Remove point
+		case 4: # Remove point
 		# elif modus == 4:  # remove point
 			print('3 remove the nearest point')
 			pOld = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
@@ -141,7 +141,7 @@ match modus:
 				changesMade = 1
 			imgs[k]['pss'] = pss
 
-		case '5': # Move point
+		case 5: # Move point
 		# elif modus == 5:  # move point
 			print('3 move the nearest point')
 			pNew = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
@@ -154,7 +154,7 @@ match modus:
 			plt.plot(pNew[0], pNew[1], 'go')
 			imgs[k]['pss'] = pss
 
-		case '6': # Refresh and save img
+		case 6: # Refresh and save img
 		# elif modus == 6:  # refresh + save img
 			show_img(imgs[1]['img1'], k, imgs[k]['pss'])
 			if int(input('is it ok to save (0/1) ')):
@@ -170,7 +170,7 @@ match modus:
 
 		# When user sets the orientation, they are prompted to select a point on the image, 
 		# and the orientation is set based on the user input.
-		case '7': # set orientation
+		case 7: # set orientation
 		# elif modus == 7:  # set orientation
 			orientationMode = 0
 			while not 1 <= orientationMode < 4: # orientationMode not in range(1, 4):
@@ -185,6 +185,6 @@ match modus:
 				else:
 					orientationMode = 0
 
-		case '8': # Quits the code
+		case 8: # Quits the code
 		# elif modus == 8:  # quit
 			print('quitting')
