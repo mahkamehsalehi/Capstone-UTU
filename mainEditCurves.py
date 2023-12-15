@@ -59,11 +59,12 @@ plt.show()
 ##    plt.imshow(imgs[k0]['img0'], cmap='gray') # Added 'cmap='gray'' for grayscale image
 ##    plt.title(str(k0))
 ##    plt.subplot(2, 3, k0 + 3) # Changed from k0 + 3 to k0 + 4
-##    plt.imshow(imgs[k0]['img1'], cmap='gray') # Added 'cmap='gray'' for grayscale image
+##	  plt.imshow(imgs[k0]['img1'], cmap='gray') # Added 'cmap='gray'' for grayscale image
 ##    plt.title(str(k0))
 
+plt.imshow(imgs[k]['img1'])
 # Figure 2
-show_img(imgs[k]['img1'], k, imgs[k]['pss'])
+#show_img(imgs[k]['img1'], k, imgs[k]['pss'])
 
 quitModus = 8 # Quits the drawing
 modus = 0 # Defines what operations are performed within the image depending on the user's choice
@@ -80,6 +81,7 @@ while modus != quitModus:
 			print('choose again')
 
 	pss = imgs[k]['pss']
+	print(pss)
 	match modus:
 		case 1: # add curve
 		#if modus == 1:  # add curve
@@ -119,6 +121,7 @@ while modus != quitModus:
 			pNew = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
 			flag, i, j = get_segment(pss, pNew, dMax)
 			if flag:
+				print('flag detected')
 				ps = pss[i]['ps']
 				p1, p2 = ps[j, :], ps[j + 1, :]
 				plt.plot([p1[0], p2[0]], [p1[1], p2[1]], 'bo')

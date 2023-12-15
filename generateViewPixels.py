@@ -19,7 +19,7 @@ def generate_view_pixels(center, max_radius, num_of_rows, num_of_columns):
 
     # Calculate total number of elements, i.e., rows * columns
     total_elements = num_of_rows * num_of_columns
-
+    print(total_elements)
     # Initialize a matrix to store pixel coordinates with zeros
     pixel_coordinates = np.zeros((total_elements, 2))
 

@@ -1,8 +1,12 @@
 import numpy as np
+import scipy
 from scipy.spatial import Delaunay, distance
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
 import networkx as nx
 
+from getAdjacencyMatrix import get_adjacency_matrix
 from triInterpolate2 import tri_interpolate_2
 from generateViewPixels import generate_view_pixels
 from bump import bump
@@ -13,7 +17,6 @@ fIn = 'data/v.txt'
 fOut = 'data/pixelMap.npy'
 v = np.loadtxt(fIn) #  v == <<p1, v(p1)>,...> where v(p1)= p2 - p1
 ps1, vs12 = v[:, :2], v[:, 2:] # ps1 = points, vs12 = vector field
-
 
 # Initialize lense constants (vakiot in Finnish)
 # r12,r21 mappings
@@ -26,11 +29,22 @@ c = np.array([712, 994])
 r12 = lambda r1: 2 * np.arcsin(a * r1) * b
 r21 = lambda r2: np.sin(r2 / b) / a
 
+##############################
 # Get frame size ni x nj
-fIn = 'data/imgs.npy'
-imgs1 = np.load(fIn, allow_pickle=True)
-sz = imgs1[0]['img1'].shape
+fIn = 'data/imgs.mat'
+data_dict = scipy.io.loadmat(fIn)
+
+data_dict_names = []
+#data_dict_values = []
+for name,value in data_dict.items():
+    data_dict_names.append(name)
+#    data_dict_values.append(value)
+imgs1 = np.array(data_dict[data_dict_names[-1]])
+
+#imgs1 = np.load(data, allow_pickle=True) # The original one
+sz = imgs1.shape #['img1'].shape
 ni, nj = sz[0], sz[1]
+##############################
 
 # Set hyperparameters
 lambda_val = 0.5 # The degree of Fourier truncation
@@ -44,9 +58,11 @@ nEigen = round(lambda_val * n)
 
 ls, tris = distance.cdist(ps1, ps1), Delaunay(ps1)
 l0 = np.mean(ls) # Mean distance between natural (Voronoi) neighbors
+
+##############################
 # There is a version with [_,_,_,_]= ... , too
-L0, _, _, _ = nx.convert_matrix.to_pandas_dataframe(tris.simplices)
-# L0, _, _, _ = getAdjacencyMatrix(tris.simplices, ps1, l0)
+L0, _, _, _ = get_adjacency_matrix(tris.simplices, ps1, l0)
+##############################
 
 D, V = np.linalg.eig(L0)
 lambdas = np.diag(D)
@@ -71,8 +87,18 @@ nv = vs12dense.shape[0] # All pixels generalized
 # Paavo: ps2= ps1; % img2 pixels (not instantiated to spare memory!)
 # Paavo: ps1ref= ps1 + us12 (not instantiated to spare memory!)
 # Compute distances ds between query points and their k-nearest neighbors.
-inds2, ds = distance.cdist(qs + vs12dense, qs, metric='euclidean'), knnsearch(qs + vs12dense, qs, k=4)
+
+##############################
+# initialize model
+neigh = NearestNeighbors(n_neighbors = 4, metric='euclidean')#, n_jobs=-1)
+# train for getting distances between nearest neighbours and their indexes
+neigh.fit(qs + vs12dense, qs) # OR just qs?
+ds, inds2 = neigh.kneighbors(qs + vs12dense)
+
+
+# Original: inds2, ds = distance.cdist(qs + vs12dense, qs, metric='euclidean'), knnsearch(qs + vs12dense, qs, k=4)
 ws = bump(ds / bumpR) # ws = weights, A bump function based on the distances
+##############################
 
 for k in range(nq):
     ws[k, :] = ws[k, :] / np.sum(ws[k, :])

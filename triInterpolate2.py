@@ -3,7 +3,7 @@
 # This function uses the pointLocation function to determine which triangles in the triangulation DT contain the query points qs. It then performs linear interpolation for points within the mesh and a simple weighted average for points outside the mesh. The weights are based on the inverse distances from the query points to the vertices of the nearest triangles.
 
 import numpy as np
-from scipy.spatial import Delaunay, cKDTree
+from scipy.spatial import Delaunay, cKDTree, delaunay_plot_2d
 import matplotlib.pyplot as plt
 
 # Input
@@ -12,9 +12,53 @@ import matplotlib.pyplot as plt
 # DT = Delaunay(ps) ?? Delaunay triangulation object
 
 # Output
-# v(q) = interpolated vector values at q \in qs 
+# v(q) = interpolated vector values at q \in qs
+
+# Example usage:
+# Assuming DT is a Delaunay triangulation of some points and vs is a corresponding set of values
+# qs is the set of points where you want to interpolate values
+# For example, you can create DT and vs like this:
+# DT = Delaunay(points)
+# vs = np.random.rand(points.shape[0], 2)
+# fqs = triInterpolate2(DT, vs, qs)
 
 def tri_interpolate_2(DT, vs, qs):
+    ti1 = DT.find_simplex(qs)
+    bc1 = DT.transform[ti1, :2]
+    print(qs)
+    inds1 = np.where(ti1 != -1)[0]
+    inds2 = np.where(ti1 == -1)[0]
+    vqs = np.zeros((qs.shape[0], 2))
+
+    # Points within the mesh DT (inside the convex hull)
+    ti1 = ti1[inds1]
+    # Transforming the query points (qs) so that they are in the local coordinate system of the simplices containing them
+
+    bc1 = bc1[inds1]
+    tInds = DT.simplices[ti1]
+    triVals1x = vs[tInds][:, :, 0]
+    print(inds1)
+    triVals1y = vs[tInds][:, :, 1]
+    vqs[inds1] = np.column_stack((np.dot(bc1, triVals1x.T), np.dot(bc1, triVals1y.T)))
+
+    if len(inds2) > 0:
+        # Points outside the mesh DT (outside the convex hull)
+        ps = DT.points
+        q2p = DT.query(qs[inds2], k=3)
+        ws = np.zeros((len(inds2), 3))
+
+        for i, (q, psi) in enumerate(zip(qs[inds2], ps[q2p])):
+            for j, pj in enumerate(psi):
+                ws[i, j] = 1 / np.linalg.norm(pj - q)
+
+            ws[i, :] /= np.sum(ws[i, :])
+            vqs[inds2[i]] = np.dot(vs[q2p[i]], ws[i, :])
+
+    return vqs
+
+
+
+'''def tri_interpolate_2(DT, vs, qs):
 
     ti1 = DT.find_simplex(qs)      # Indices of simplices for each point
     inds1 = np.where(ti1 >= 0)[0]  # Points within the mesh = convex hull
@@ -46,13 +90,13 @@ def tri_interpolate_2(DT, vs, qs):
     for i, ind in enumerate(inds2):
         vqs[ind] = np.dot(vs[q2p[1][i]], ws[i])  # Update interpolated vector value for points outside mesh in vqs
 
-    return vqs
+    return vqs'''
 
 # Example usage:
-ps = np.random.rand(10, 2)  # Example point cloud
-vs = np.random.rand(len(ps), 2)  # Example vector values at points
-DT = Delaunay(ps)
-qs = np.random.rand(5, 2)  # Example query points
+# ps = np.random.rand(10, 2)  # Example point cloud
+# vs = np.random.rand(len(ps), 2)  # Example vector values at points
+# DT = Delaunay(ps)
+# qs = np.random.rand(5, 2)  # Example query points
 '''
 # Call the function
 vqs = tri_interpolate2(DT, vs, qs)
