@@ -30,7 +30,7 @@ if (os.path.exists(fData)):
 	
 else:
     print('File does not exist, reading 3 frames')
-    imgs = get_3_imgs(34)
+    imgs = get_3_imgs(72)
     with open(fData, 'wb') as f:
 	    pickle.dump(imgs, f)  
 	
