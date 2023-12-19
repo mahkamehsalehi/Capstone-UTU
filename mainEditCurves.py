@@ -30,7 +30,7 @@ if (os.path.exists(fData)):
 	
 else:
     print('File does not exist, reading 3 frames')
-    imgs = get_3_imgs(34)
+    imgs = get_3_imgs(72)
     with open(fData, 'wb') as f:
 	    pickle.dump(imgs, f)  
 	
@@ -81,12 +81,10 @@ while modus != quitModus:
 			print('choose again')
 
 	pss = imgs[k]['pss']
-	print(pss)
 	match modus:
-		case 1: # add curve
-		#if modus == 1:  # add curve
+		case 1: # add points and draw a piecewise curve between the points
 			print('1 curve+: press enter --> done')
-			ps = np.array(plt.ginput())  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
+			ps = np.array(plt.ginput(-1, timeout=0))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
 
 			if ps.size != 0:
 				if not pss:
@@ -99,10 +97,9 @@ while modus != quitModus:
 				changesMade = 1
 			imgs[k]['pss'] = pss
 		
-		case 2: # Remove curve
-		# elif modus == 2:  # remove curve
+		case 2: # Remove a curve
 			print('2 curve-: a far point --> no action')
-			p = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
+			p = np.array(plt.ginput(1, timeout=0))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
 			flag, i0, j0 = get_p(pss, p, dMax)
 			if flag:
 				ps = pss[i0]['ps']
@@ -115,13 +112,13 @@ while modus != quitModus:
 					imgs[k]['pss'] = []
 				changesMade = 1
 		
-		case 3: # Add point
-		# elif modus == 3:  # add point
+		case 3: # Add point to an existing curve
+			#TODO: adding a point duplicates connections to endpoints. FIX
 			print('3 add point at the center of the nearest segment')
-			pNew = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
+			pNew = np.array(plt.ginput(1, timeout=0))[0]  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
 			flag, i, j = get_segment(pss, pNew, dMax)
 			if flag:
-				print('flag detected')
+				print(pNew)
 				ps = pss[i]['ps']
 				p1, p2 = ps[j, :], ps[j + 1, :]
 				plt.plot([p1[0], p2[0]], [p1[1], p2[1]], 'bo')
@@ -131,10 +128,9 @@ while modus != quitModus:
 				changesMade = 1
 			imgs[k]['pss'] = pss
 		
-		case 4: # Remove point
-		# elif modus == 4:  # remove point
-			print('3 remove the nearest point')
-			pOld = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
+		case 4: # Remove point from an existing curve
+			print('4 remove the nearest point')
+			pOld = np.array(plt.ginput(1, timeout=0))[0]  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
 			flag, i, j = get_p(pss, pOld, dMax)
 			if flag:
 				plt.plot(pOld[0], pOld[1], 'ro')
@@ -144,10 +140,9 @@ while modus != quitModus:
 				changesMade = 1
 			imgs[k]['pss'] = pss
 
-		case 5: # Move point
-		# elif modus == 5:  # move point
+		case 5: # Move point in an existing curve
 			print('3 move the nearest point')
-			pNew = np.array(plt.ginput(1))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
+			pNew = np.array(plt.ginput(1, timeout=0))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
 			flag, i, j = get_p(pss, pNew, dMax)
 			if flag:
 				pOld = pss[i]['ps'][j, :]
@@ -158,7 +153,6 @@ while modus != quitModus:
 			imgs[k]['pss'] = pss
 
 		case 6: # Refresh and save img
-		# elif modus == 6:  # refresh + save img
 			show_img(imgs[1]['img1'], k, imgs[k]['pss'])
 			if int(input('is it ok to save (0/1) ')):
 				# If changes have been made, adds crosspoints into the image
@@ -174,14 +168,13 @@ while modus != quitModus:
 		# When user sets the orientation, they are prompted to select a point on the image, 
 		# and the orientation is set based on the user input.
 		case 7: # set orientation
-		# elif modus == 7:  # set orientation
 			orientationMode = 0
 			while not 1 <= orientationMode < 4: # orientationMode not in range(1, 4):
 				orientationMode = int(input('set orientation mode 0,1,2,3 (quit/mag/cya/yel)'))
 
 			while orientationMode != 0:
 				print('setting orientation, %d' % orientationMode)
-				pNew = np.array(plt.ginput(1))  # note: ginput() has weird coordinate system (*)
+				pNew = np.array(plt.ginput(1, timeout= 0))  # note: ginput() has weird coordinate system (*)
 				flag, i, j = get_p(pss, pNew, dMax)
 				if flag:
 					imgs[k]['pss'][i]['ori'] = orientationMode
@@ -189,5 +182,4 @@ while modus != quitModus:
 					orientationMode = 0
 
 		case 8: # Quits the code
-		# elif modus == 8:  # quit
 			print('quitting')
