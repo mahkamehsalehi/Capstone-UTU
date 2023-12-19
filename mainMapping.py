@@ -1,3 +1,5 @@
+import os
+import pickle
 import numpy as np
 import scipy
 from scipy.spatial import Delaunay, distance
@@ -5,6 +7,7 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
 import networkx as nx
+from get3Imgs import get_3_imgs
 
 from getAdjacencyMatrix import get_adjacency_matrix
 from triInterpolate2 import tri_interpolate_2
@@ -20,7 +23,7 @@ ps1, vs12 = v[:, :2], v[:, 2:] # ps1 = points, vs12 = vector field
 
 # Initialize lense constants (vakiot in Finnish)
 # r12,r21 mappings
-rMax = 677
+rMax = 1677
 thetaMax = (90 + 20) / 180 * np.pi
 a = np.sin(thetaMax / 2) / rMax
 b = rMax / thetaMax
@@ -31,19 +34,30 @@ r21 = lambda r2: np.sin(r2 / b) / a
 
 ##############################
 # Get frame size ni x nj
-fIn = 'data/imgs.mat'
-data_dict = scipy.io.loadmat(fIn)
-
+data_file = 'data/imgs.pkl'
+#data_file = scipy.io.loadmat(fIn)
 data_dict_names = []
-#data_dict_values = []
-for name,value in data_dict.items():
-    data_dict_names.append(name)
-#    data_dict_values.append(value)
-imgs1 = np.array(data_dict[data_dict_names[-1]])
 
+'''for name,value in data_file.items():
+    data_dict_names.append(name)
+imgs1 = np.array(data_file[data_dict_names[-1]])'''
+
+if (os.path.exists(data_file)):
+	with open(data_file, 'rb') as f:
+		imgs = pickle.load(f)
+	
+else:
+    print('File does not exist, reading 3 frames')
+    imgs = get_3_imgs(72)
+    with open(data_file, 'wb') as f:
+	    pickle.dump(imgs, f)
+plt.imshow(imgs[0]['img1']) 
+plt.show()
 #imgs1 = np.load(data, allow_pickle=True) # The original one
-sz = imgs1.shape #['img1'].shape
+sz = np.array(imgs[0]['img1']).shape #['img1'].shape
+
 ni, nj = sz[0], sz[1]
+print(nj)
 ##############################
 
 # Set hyperparameters
@@ -59,10 +73,8 @@ nEigen = round(lambda_val * n)
 ls, tris = distance.cdist(ps1, ps1), Delaunay(ps1)
 l0 = np.mean(ls) # Mean distance between natural (Voronoi) neighbors
 
-##############################
 # There is a version with [_,_,_,_]= ... , too
 L0, _, _, _ = get_adjacency_matrix(tris.simplices, ps1, l0)
-##############################
 
 D, V = np.linalg.eig(L0)
 lambdas = np.diag(D)
@@ -70,11 +82,10 @@ Vn = V[:, :nEigen]
 # Smoothed vector field us12 (regularized vector field in Paavo's words)(it's based on Laplacian matrix)
 us12 = Vn @ Vn.T @ vs12
 
-
 # Generalization to all pixes in img1 (the view circle)
 # qs = pixel coordinates = view area pixels
 # inds1 = qs' corresponding indices = indices of the view area pixels
-inds1, qs = generate_view_pixels(c, rMax, ni, nj)
+inds1, qs = generate_view_pixels(ps1, c, rMax, ni, nj)
 nq = qs.shape[0]
 
 # Use Delaunay triangulation (DT) to interpolate the smoothed vector field (us12) at query points qs

@@ -25,7 +25,6 @@ import matplotlib.pyplot as plt
 def tri_interpolate_2(DT, vs, qs):
     ti1 = DT.find_simplex(qs)
     bc1 = DT.transform[ti1, :2]
-    print(qs)
     inds1 = np.where(ti1 != -1)[0]
     inds2 = np.where(ti1 == -1)[0]
     vqs = np.zeros((qs.shape[0], 2))
@@ -37,8 +36,9 @@ def tri_interpolate_2(DT, vs, qs):
     bc1 = bc1[inds1]
     tInds = DT.simplices[ti1]
     triVals1x = vs[tInds][:, :, 0]
-    print(inds1)
+    print(qs)
     triVals1y = vs[tInds][:, :, 1]
+    # TODO: (np.dot(bc1, triVals1x.T) might cause problems even if the generateViewPixels error is fixed
     vqs[inds1] = np.column_stack((np.dot(bc1, triVals1x.T), np.dot(bc1, triVals1y.T)))
 
     if len(inds2) > 0:
