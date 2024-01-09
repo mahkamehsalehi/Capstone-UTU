@@ -79,7 +79,7 @@ while modus != quitModus:
 		modus = int(input('1: +curve, 2: -curve, 3: +point, 4: -point, 5: +-point, 6: refresh+save, 7: set orientation, 8: quit '))
 		if not 1 <= modus < quitModus + 1: # modus not in range(1, quitModus + 1):
 			print('choose again')
-
+	plt.imshow(imgs[k]['img1'])
 	pss = imgs[k]['pss']
 	match modus:
 		case 1: # add points and draw a piecewise curve between the points
@@ -153,7 +153,7 @@ while modus != quitModus:
 			imgs[k]['pss'] = pss
 
 		case 6: # Refresh and save img
-			show_img(imgs[1]['img1'], k, imgs[k]['pss'])
+			show_img(imgs[k]['img1'], k, imgs[k]['pss'])
 			if int(input('is it ok to save (0/1) ')):
 				# If changes have been made, adds crosspoints into the image
 				if changesMade:
