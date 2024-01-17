@@ -24,11 +24,11 @@ import matplotlib.pyplot as plt
 
 def tri_interpolate_2(DT, vs, qs):
     ti1 = DT.find_simplex(qs)
-    bc1 = DT.transform[ti1, :2]
+    bc1 = np.reshape(DT.transform[ti1, :2], (1439789, 4))
     inds1 = np.where(ti1 != -1)[0]
     inds2 = np.where(ti1 == -1)[0]
     vqs = np.zeros((qs.shape[0], 2))
-
+    
     # Points within the mesh DT (inside the convex hull)
     ti1 = ti1[inds1]
     # Transforming the query points (qs) so that they are in the local coordinate system of the simplices containing them
@@ -36,8 +36,8 @@ def tri_interpolate_2(DT, vs, qs):
     bc1 = bc1[inds1]
     tInds = DT.simplices[ti1]
     triVals1x = vs[tInds][:, :, 0]
-    print(qs)
     triVals1y = vs[tInds][:, :, 1]
+    print(ti1.shape)
     # TODO: (np.dot(bc1, triVals1x.T) might cause problems even if the generateViewPixels error is fixed
     vqs[inds1] = np.column_stack((np.dot(bc1, triVals1x.T), np.dot(bc1, triVals1y.T)))
 

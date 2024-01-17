@@ -70,6 +70,7 @@ quitModus = 8 # Quits the drawing
 modus = 0 # Defines what operations are performed within the image depending on the user's choice
 orientationMode = 0
 changesMade = 0 # 1 if changes have been made and 0 if not
+open_img = 0
 
 # Registers keyinputs of the user. With this code the user can draw piecewise linear lines 
 # and corner points on top of the fisheye image
@@ -79,7 +80,9 @@ while modus != quitModus:
 		modus = int(input('1: +curve, 2: -curve, 3: +point, 4: -point, 5: +-point, 6: refresh+save, 7: set orientation, 8: quit '))
 		if not 1 <= modus < quitModus + 1: # modus not in range(1, quitModus + 1):
 			print('choose again')
-	plt.imshow(imgs[k]['img1'])
+	
+	show_img(imgs[k]['img1'], k, imgs[k]['pss'], open_img)
+	
 	pss = imgs[k]['pss']
 	match modus:
 		case 1: # add points and draw a piecewise curve between the points
@@ -153,7 +156,10 @@ while modus != quitModus:
 			imgs[k]['pss'] = pss
 
 		case 6: # Refresh and save img
-			show_img(imgs[k]['img1'], k, imgs[k]['pss'])
+			open_img = 1
+			show_img(imgs[k]['img1'], k, imgs[k]['pss'], open_img)
+			open_img = 0
+
 			if int(input('is it ok to save (0/1) ')):
 				# If changes have been made, adds crosspoints into the image
 				if changesMade:

@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
-import numpy as np
 
-def show_img(img, k, pss):
+def show_img(img, k, pss, open_img):
     cs = [{'co': 'bo', 'c': 'b'},    
           {'co': 'mo', 'c': 'm'},    
           {'co': 'co', 'c': 'c'},
@@ -21,6 +20,8 @@ def show_img(img, k, pss):
         co, c = cs[l - 1]['co'], cs[l - 1]['c']
         ax1.plot(ps[:, 0], ps[:, 1], co)
         ax1.plot(ps[:, 0], ps[:, 1], c)
-    
-    plt.show()
+
+    if open_img == 1:
+        plt.show()
+
     return None

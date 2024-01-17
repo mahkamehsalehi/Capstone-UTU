@@ -19,11 +19,11 @@ from bump import bump
 fIn = 'data/v.txt'
 fOut = 'data/pixelMap.npy'
 v = np.loadtxt(fIn) #  v == <<p1, v(p1)>,...> where v(p1)= p2 - p1
-ps1, vs12 = v[:, :2], v[:, 2:] # ps1 = points, vs12 = vector field
+#ps1, vs12 = v[:, :2], v[:, 2:] # ps1 = points, vs12 = vector field
 
 # Initialize lense constants (vakiot in Finnish)
 # r12,r21 mappings
-rMax = 1677
+rMax = 677
 thetaMax = (90 + 20) / 180 * np.pi
 a = np.sin(thetaMax / 2) / rMax
 b = rMax / thetaMax
@@ -55,9 +55,8 @@ plt.imshow(imgs[0]['img1'])
 plt.show()
 #imgs1 = np.load(data, allow_pickle=True) # The original one
 sz = np.array(imgs[0]['img1']).shape #['img1'].shape
-
 ni, nj = sz[0], sz[1]
-print(nj)
+print('sz', sz)
 ##############################
 
 # Set hyperparameters
@@ -85,7 +84,7 @@ us12 = Vn @ Vn.T @ vs12
 # Generalization to all pixes in img1 (the view circle)
 # qs = pixel coordinates = view area pixels
 # inds1 = qs' corresponding indices = indices of the view area pixels
-inds1, qs = generate_view_pixels(ps1, c, rMax, ni, nj)
+inds1, qs = generate_view_pixels(c, rMax, ni, nj)
 nq = qs.shape[0]
 
 # Use Delaunay triangulation (DT) to interpolate the smoothed vector field (us12) at query points qs

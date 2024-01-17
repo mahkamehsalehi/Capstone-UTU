@@ -1,7 +1,7 @@
 
 import numpy as np
 
-def generate_view_pixels(points, center, max_radius, num_of_rows, num_of_columns):
+def generate_view_pixels(center, max_radius, num_of_rows, num_of_columns):
     """
     This function generates all view pixels for a given center, maximum radius, number of rows and columns.
 
@@ -19,10 +19,8 @@ def generate_view_pixels(points, center, max_radius, num_of_rows, num_of_columns
 
     # Calculate total number of elements, i.e., rows * columns
     total_elements = num_of_rows * num_of_columns
-    print(total_elements)
     # Initialize a matrix to store pixel coordinates with zeros
     pixel_coordinates = np.zeros((total_elements, 2))
-    print(num_of_columns)
     counter = 0
     for i in range(0,num_of_rows):
         for j in range(0,num_of_columns):
@@ -36,11 +34,8 @@ def generate_view_pixels(points, center, max_radius, num_of_rows, num_of_columns
     # TODO: Need to adjust max_radius value
     # Find indices of pixels which are within the maximum radius from the center
     indices = np.where(distances <= max_radius)[0]
-    print(distances)
-    print(pixel_coordinates, '1')
     # Restrict pixel coordinates to only include view pixels (those inside the maximum radius)
     pixel_coordinates = pixel_coordinates[indices]
-    print(pixel_coordinates, '2')
     
     return indices, pixel_coordinates
 
