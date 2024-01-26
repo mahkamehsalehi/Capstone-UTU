@@ -24,20 +24,33 @@ import matplotlib.pyplot as plt
 
 def tri_interpolate_2(DT, vs, qs):
     ti1 = DT.find_simplex(qs)
-    bc1 = np.reshape(DT.transform[ti1, :2], (1439789, 4))
+
     inds1 = np.where(ti1 != -1)[0]
     inds2 = np.where(ti1 == -1)[0]
     vqs = np.zeros((qs.shape[0], 2))
-    
+    bc1 = np.empty(shape = (0, 3))
+
     # Points within the mesh DT (inside the convex hull)
     ti1 = ti1[inds1]
+    # Points inside any triangle
+    qsInTri = qs[inds1]
+    
+    for triangle in range(DT.simplices.shape[0]):
+         # Indexes of points inside the specific triangle that is being looped
+        qsIndsInTri = np.where(ti1 == triangle)
+        b = DT.transform[triangle, :2].dot(np.transpose(qsInTri[qsIndsInTri]-DT.transform[triangle, 2]))
+        bc1 = np.append(bc1, np.c_[np.transpose(b), 1 - b.sum(axis = 0)])
+        #print(np.c_[np.transpose(b), 1 - b.sum(axis = 0)])
+    
     # Transforming the query points (qs) so that they are in the local coordinate system of the simplices containing them
+        
+    # Reshaping the barycentric coordinate matrix
+    bc1 = np.reshape(bc1, (-1, 3))
 
-    bc1 = bc1[inds1]
     tInds = DT.simplices[ti1]
     triVals1x = vs[tInds][:, :, 0]
     triVals1y = vs[tInds][:, :, 1]
-    print(ti1.shape)
+    
     # TODO: (np.dot(bc1, triVals1x.T) might cause problems even if the generateViewPixels error is fixed
     vqs[inds1] = np.column_stack((np.dot(bc1, triVals1x.T), np.dot(bc1, triVals1y.T)))
 

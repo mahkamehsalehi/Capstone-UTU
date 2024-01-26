@@ -56,7 +56,6 @@ plt.show()
 #imgs1 = np.load(data, allow_pickle=True) # The original one
 sz = np.array(imgs[0]['img1']).shape #['img1'].shape
 ni, nj = sz[0], sz[1]
-print('sz', sz)
 ##############################
 
 # Set hyperparameters
