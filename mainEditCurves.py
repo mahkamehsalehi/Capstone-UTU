@@ -104,8 +104,11 @@ while modus != quitModus:
 			print('2 curve-: a far point --> no action')
 			p = np.array(plt.ginput(1, timeout=0))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
 			flag, i0, j0 = get_p(pss, p, dMax)
+			print('FLAG ETC:',flag, i0, j0)
 			if flag:
+				print('PSS: ',pss)
 				ps = pss[i0]['ps']
+				print('PS: ',ps)
 				plt.plot(ps[:, 0], ps[:, 1], 'ro')
 				m = len(pss)
 				inds = set(range(1, m + 1)) - {i0}
