@@ -51,21 +51,31 @@ def tri_interpolate_2(DT, vs, qs):
     triVals1x = vs[tInds][:, :, 0]
     triVals1y = vs[tInds][:, :, 1]
     
-    # TODO: (np.dot(bc1, triVals1x.T) might cause problems even if the generateViewPixels error is fixed
-    vqs[inds1] = np.column_stack((np.dot(bc1, triVals1x.T), np.dot(bc1, triVals1y.T)))
+    # Matrix multiplication
+    x = np.sum(bc1 * triVals1x, axis = 1)
+    y = np.sum(bc1 * triVals1y, axis = 1)
+    vqs[inds1] = np.column_stack((np.reshape(x, (-1, 1)), np.reshape(y, (-1, 1))))
 
-    if len(inds2) > 0:
+    '''if len(inds2) > 0:
         # Points outside the mesh DT (outside the convex hull)
         ps = DT.points
         q2p = DT.query(qs[inds2], k=3)
         ws = np.zeros((len(inds2), 3))
+
+        from sklearn.neighbors import KNeighborsClassifier
+
+        knn = KNeighborsClassifier(n_neighbors=3, metric='euclidean')
+        knn.fit(ps)
+
+        l = knn.kneighbors(qs[inds2], n_neighbors=3, return_distance=False)
+        ps[l].ravel()
 
         for i, (q, psi) in enumerate(zip(qs[inds2], ps[q2p])):
             for j, pj in enumerate(psi):
                 ws[i, j] = 1 / np.linalg.norm(pj - q)
 
             ws[i, :] /= np.sum(ws[i, :])
-            vqs[inds2[i]] = np.dot(vs[q2p[i]], ws[i, :])
+            vqs[inds2[i]] = np.dot(vs[q2p[i]], ws[i, :])'''
 
     return vqs
 
