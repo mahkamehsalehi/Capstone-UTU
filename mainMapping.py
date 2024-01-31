@@ -96,18 +96,19 @@ nv = vs12dense.shape[0] # All pixels generalized
 # Paavo: ps2= ps1; % img2 pixels (not instantiated to spare memory!)
 # Paavo: ps1ref= ps1 + us12 (not instantiated to spare memory!)
 # Compute distances ds between query points and their k-nearest neighbors.
-
-##############################
+print(qs + vs12dense)
+print('vs12\n', vs12dense)
 # initialize model
-neigh = NearestNeighbors(n_neighbors = 4, metric='euclidean')#, n_jobs=-1)
+neigh = NearestNeighbors(n_neighbors = 4, metric='euclidean')
 # train for getting distances between nearest neighbours and their indexes
-neigh.fit(qs + vs12dense, qs) # OR just qs?
-ds, inds2 = neigh.kneighbors(qs + vs12dense)
-
+neigh.fit(qs + vs12dense)
+ds, inds2 = neigh.kneighbors(qs)
+if 1 in ds/bumpR:
+    print('y')
 
 # Original: inds2, ds = distance.cdist(qs + vs12dense, qs, metric='euclidean'), knnsearch(qs + vs12dense, qs, k=4)
 ws = bump(ds / bumpR) # ws = weights, A bump function based on the distances
-##############################
+
 
 for k in range(nq):
     ws[k, :] = ws[k, :] / np.sum(ws[k, :])
@@ -128,5 +129,6 @@ if True:
     axs[1].set_ylabel('w')
     axs[1].set_title('Weight w of nearest pixel neighbors')
 
+    plt.show()
 # Save results
 np.save(fOut, {'inds1': inds1, 'inds2': inds2, 'ws': ws})

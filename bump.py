@@ -5,6 +5,6 @@ def bump(r):
     # note: vectorized computation
     # out = bump(r)
 
-    out = np.multiply(r <= 1.0, np.exp(-1 / (1 - r**2)))
+    out = np.multiply(r <= 1.0, np.exp(np.divide(-1, (1 - np.power(r,2)))))
 
     return out
