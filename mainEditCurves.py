@@ -184,6 +184,7 @@ while modus != quitModus:
 			while orientationMode != 0:
 				print('setting orientation, %d' % orientationMode)
 				pNew = np.array(plt.ginput(1, timeout= 0))  # note: ginput() has weird coordinate system (*)
+				print(pNew)
 				flag, i, j = get_p(pss, pNew, dMax)
 				if flag:
 					imgs[k]['pss'][i]['ori'] = orientationMode

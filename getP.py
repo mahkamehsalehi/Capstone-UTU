@@ -10,7 +10,7 @@ def get_p(pss, p, d_max):
         n = len(ps['ps'])
         print('i0: ',i0)
         print('N: ',n)
-        if n > 0:
+        if n > 0 and p.size>0:
             print('ps: ',ps['ps'])
             tree = KDTree(ps['ps'])
             ji, di = tree.query([p], k=1)
