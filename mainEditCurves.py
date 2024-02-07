@@ -50,7 +50,7 @@ for i, img_dict in enumerate(imgs):
     plt.subplot(len(imgs), 2, i*2+2)
     plt.imshow(img_dict['img1'], cmap='gray')
     plt.title('Image 1')
-plt.show()
+#plt.show()
 
 # Old plotting
 
@@ -110,8 +110,9 @@ while modus != quitModus:
 				ps = pss[i0]['ps']
 				print('PS: ',ps)
 				plt.plot(ps[:, 0], ps[:, 1], 'ro')
+				plt.show()
 				m = len(pss)
-				inds = set(range(1, m + 1)) - {i0}
+				inds = set(range(0, m)) - {i0}
 				imgs[k]['pss'] = [pss[i] for i in inds]
 				m -= 1
 				if m == 0:  # this might never happen!
