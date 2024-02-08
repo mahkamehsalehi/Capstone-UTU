@@ -139,13 +139,13 @@ while modus != quitModus:
 		
 		case 4: # Remove point from an existing curve
 			print('4 remove the nearest point')
-			pOld = np.array(plt.ginput(1, timeout=0))[0]  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
+			pOld = np.array(plt.ginput(1, timeout=0))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
 			flag, i, j = get_p(pss, pOld, dMax)
 			if flag:
-				plt.plot(pOld[0], pOld[1], 'ro')
+				plt.plot(pOld[0][0], pOld[0][1], 'ro')
 				ps = pss[i]['ps']
-				inds = set(range(ps.shape[0])) - {j}
-				pss[i]['ps'] = ps[list(inds), :]
+				inds = np.where(np.arange(ps.shape[0]) != j)[0]
+				pss[i]['ps'] = ps[inds, :]
 				changesMade = 1
 			imgs[k]['pss'] = pss
 
