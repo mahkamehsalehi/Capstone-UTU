@@ -122,15 +122,17 @@ while modus != quitModus:
 		case 3: # Add point to an existing curve
 			#TODO: adding a point duplicates connections to endpoints. FIX
 			print('3 add point at the center of the nearest segment')
-			pNew = np.array(plt.ginput(1, timeout=0))[0]  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
+			pNew = np.array(plt.ginput(1, timeout=0))  # Registers a keyinput. NOTE: ginput() has weird coordinate system (*)
 			flag, i, j = get_segment(pss, pNew, dMax)
 			if flag:
 				print(pNew)
 				ps = pss[i]['ps']
 				p1, p2 = ps[j, :], ps[j + 1, :]
+				print(i, j)
 				plt.plot([p1[0], p2[0]], [p1[1], p2[1]], 'bo')
-				plt.plot(pNew[0], pNew[1], 'go')
-				plt.plot([p1[0], pNew[0], p2[0]], [p1[1], pNew[1], p2[1]], 'g')
+				plt.plot(pNew[0][0], pNew[0][1], 'go')
+				plt.plot([p1[0], pNew[0][0], p2[0]], [p1[1], pNew[0][1], p2[1]], 'g')
+				plt.show()
 				pss[i]['ps'] = insert_p(ps, j, pNew)
 				changesMade = 1
 			imgs[k]['pss'] = pss
