@@ -1,12 +1,9 @@
 import os
 import pickle
 import numpy as np
-import scipy
 from scipy.spatial import Delaunay, distance
-from sklearn.feature_extraction import DictVectorizer
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
-import networkx as nx
 from get3Imgs import get_3_imgs
 
 from getAdjacencyMatrix import get_adjacency_matrix
