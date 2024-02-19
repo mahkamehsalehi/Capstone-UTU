@@ -4,8 +4,8 @@ import numpy as np
 from scipy.spatial import Delaunay, distance
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
-from get3Imgs import get_3_imgs
 
+from get3Imgs import get_3_imgs
 from getAdjacencyMatrix import get_adjacency_matrix
 from triInterpolate2 import tri_interpolate_2
 from generateViewPixels import generate_view_pixels
