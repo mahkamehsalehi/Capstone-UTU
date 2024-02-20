@@ -70,7 +70,7 @@ for k in range(3):  # 3 images
             usedOris.append(uniqueOri)
 
     pss2 = [{'ps': map_pixels(pss1[i]['ps'], r12, c, sz, rMax),
-             'ori': pss1[i]['ori']} for i in range(nCurves)]
+             'ori': pss1[i]['ori']} for i in range(nCurves) if i!=0]
 
     if True:
         plt.figure(2)
