@@ -1,4 +1,5 @@
 import pickle
+from networkx import is_empty
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -11,7 +12,7 @@ import os.path
 
 # 1) Initial values for the map
 # 1.1) Size of the frames
-fIn = './data/imgs.pkl'
+fIn = './data/checkerboard_imgs.pkl'
 if os.path.exists(fIn):
     with open(fIn, 'rb') as f:
         imgs1 = pickle.load(f)
@@ -44,7 +45,7 @@ counterV = 0
 # each ori category has to be unique
 usedOris = []
 
-for k in range(3):  # 3 images
+for k in range(2,3):  # 3 images
     pss1 = imgs1[k]['pss']
     nCurves = len(pss1)  # raw image chessboard border curves
 
@@ -72,16 +73,19 @@ for k in range(3):  # 3 images
     pss2 = [{'ps': map_pixels(pss1[i]['ps'], r12, c, sz, rMax),
              'ori': pss1[i]['ori']} for i in range(nCurves) if i!=0]
 
+
     if True:
         plt.figure(2)
         plt.clf()
         plt.box(True)
         plt.axis('equal')
-        for i in range(nCurves):
+        
+        for i in range(1, nCurves):
             ps = pss1[i]['ps']
+            #print(ps)
             plt.plot(ps[:, 0], ps[:, 1], 'bo')
-            ps = pss2[i]['ps']
-            if ps:
+            ps = pss2[i-1]['ps']
+            if ps.size != 0:
                 plt.plot(ps[:, 0], ps[:, 1], 'go')
 
         plt.xlabel('i')
@@ -90,19 +94,19 @@ for k in range(3):  # 3 images
         plt.show()
 
     # 2.3) Find individual GCs
-    CSCs = np.zeros((nCurves, 4))  # <<aPixel, ori>, ...>
-    pss3 = [{'ps': [], 'ori': 0, 'corners': []} for _ in range(nCurves)]
+    CSCs = np.zeros((nCurves-1, 4))  # <<aPixel, ori>, ...>
+    pss3 = [{'ps': [], 'ori': 0, 'corners': []} for _ in range(nCurves-1)]
 
-    for i in range(nCurves):
+    for i in range(nCurves-1):
         ps = pss2[i]['ps']
         ori = pss2[i]['ori']
 
-        if ps:
-            aPixel, h, e, flag = fit_csc1(ps)  # Assuming fitCSC1 exists
+        if ps.size != 0:
+            aPixel, h, e, l, flag = fit_csc1(ps)  # Assuming fitCSC1 exists
             cps = get_CSC_points(aPixel, h)  # Assuming getCSCpoints exists
             pss3[i]['ps'] = cps
             pss3[i]['ori'] = ori
-            CSCs[i, :] = [aPixel, h, ori]
+            CSCs[i] = [aPixel[0], aPixel[1], h, ori]
 
     # 2.4) Record corner points of CSCs
     for i in range(len(imgs1[k]['corners'])):
