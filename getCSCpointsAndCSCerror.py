@@ -14,7 +14,10 @@ def get_CSC_points(aPixel, h):
         ps (numpy array): Corresponding pixel coordinates on 3D unit sphere CSC
     """
 
-    global rMax, thetaMax, c  # Global variables
+    # Global variables
+    rMax = 677  # (pix)
+    thetaMax = (90 + 20) / 180 * np.pi  # (rad)
+    c = np.array([994, 712])  # [712,994]  # center pixel
 
     aPixel = aPixel - c  # Subtract mean pixel location from input pixel location
     r = np.linalg.norm(aPixel)  # Compute Euclidean distance (r) of pixel from origin
@@ -37,7 +40,7 @@ def get_CSC_points(aPixel, h):
     cps = np.zeros((n,3))  # Initialize array for storing coordinates of points on CSC
     for i in range(n):
         psi = psis[i]  # Angular position along axis of symmetry
-        cps[i,:] = h * na + rho * (nb * np.cos(psi) + nc * np.sin(psi))  # Compute coordinates of point on CSC
+        cps[i,:] = np.multiply(h, na) + np.multiply(rho, (nb * np.cos(psi) + nc * np.sin(psi)))  # Compute coordinates of point on CSC
 
     ps = np.zeros((n,2))  # Initialize array for storing pixel coordinates on CSC
     counter = 0
@@ -47,18 +50,20 @@ def get_CSC_points(aPixel, h):
         theta = np.arccos(p3d[2])  # Angular distance from origin
         if theta <= thetaMax:
             r = theta / thetaMax * rMax  # Compute radius of point on CSC
-            p = c + r * [np.cos(phi), np.sin(phi)]  # Convert polar coordinates to Cartesian and add mean pixel location
-            counter += 1
+            p = c + np.multiply(r, [np.cos(phi), np.sin(phi)])  # Convert polar coordinates to Cartesian and add mean pixel location
             ps[counter,:] = p  # Store pixel coordinate in array
+            counter += 1
     ps = ps[:counter,:]  # Trim array to number of points on CSC
+    n = counter
 
     dps = np.diff(ps)  # Compute differences between consecutive pixels
     ls = np.linalg.norm(dps, axis=1)  # Compute Euclidean distances along each dimension
     l0 = np.mean(ls)   # Approximate average distance between points on CSC
     lMax = np.max(ls)  # Maximum distance between consecutive pixels
+    i = np.argmax(ls)
 
     if lMax >3 * l0:  # If maximum distance exceeds three times the average, trim array to remove extraneous points
-        inds = np.concatenate((np.arange(i+1, n), np.arange(n)), axis=0)
+        inds = np.concatenate((np.arange(i+1, n), np.arange(i+1)), axis=0)
         ps = ps[inds,:]
 
     return ps  # Return pixel coordinates on CSC

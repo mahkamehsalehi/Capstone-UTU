@@ -8,7 +8,10 @@ from rndUnitDiskP import rnd_unit_disk_p
 #!!!Requires densify_curve, rnd_unit_disk_p, get_csc_error and fun_adapter functions!!!
 
 def fit_csc1(ps):
-    global c, rMax
+
+    # Global variables
+    rMax = 677  # (pix)
+    c = np.array([994, 712])  # [712,994]  # center pixel
 
     # 0) densify close to the pixel size
     ps = densify_curve(ps, 2.0)
