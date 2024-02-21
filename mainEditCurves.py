@@ -189,8 +189,10 @@ while modus != quitModus:
 				pNew = np.array(plt.ginput(1, timeout= 0))  # note: ginput() has weird coordinate system (*)
 				print(pNew)
 				flag, i, j = get_p(pss, pNew, dMax)
-				if flag:
+				if flag and imgs[k]['pss'][i]['ori'] == 0:
 					imgs[k]['pss'][i]['ori'] = orientationMode
+				elif not imgs[k]['pss'][i]['ori'] == 0:
+					print("Curve already has a non-zero orientation!")
 				else:
 					orientationMode = 0
 
