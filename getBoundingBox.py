@@ -9,6 +9,6 @@ def get_bounding_box(segment):
     max_values = np.max(segment, axis=0)   # maximum values along each column
 
     bounding_box = np.concatenate((min_values, max_values))  # concatenate min and max values
-
+    print(bounding_box)
     return bounding_box.tolist()  # convert numpy array back to list for Pythonic compatibility
 

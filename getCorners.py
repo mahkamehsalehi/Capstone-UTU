@@ -17,6 +17,7 @@ def get_corners(pss):  # This function is used to find all corners in a given se
                 p = get_crossing(ps1, ps2)  # Call to function 'get_crossing' that returns any intersection points between ps1 and ps2
 
                 if len(p) > 0:   # If there is at least one intersection point...
+                    print("found crossing")
                     counter += 1    # Increase the corner count by one
                     corners.append({'p': p, 'curves': [i, j]})  # Add information about this corner to the list of corners
 

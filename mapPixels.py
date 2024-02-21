@@ -26,7 +26,7 @@ def map_pixels(ps1, r12, c, sz, r_max):
         r2s = np.vectorize(r12)(r1s)
         phis = np.arctan2(rel_ps[:, 1], rel_ps[:, 0])
         ps2 = np.column_stack([np.multiply(r2s, np.cos(phis)), np.multiply(r2s, np.sin(phis))]) + a_shift
-        print(ps2)
-        ps2 = np.minimum(np.maximum([1, 1], ps2), [sz[1][0], sz[0][0]])  # Reverse sz for correct indexing
+        print(np.maximum([1,1], ps2))
+        ps2 = np.minimum(np.maximum([1, 1], ps2), sz[::-1])  # Reverse sz for correct indexing
 
     return ps2
