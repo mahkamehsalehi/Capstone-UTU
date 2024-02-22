@@ -19,9 +19,8 @@ def get_crossing(ps1, ps2):
         for j1 in range(n2 - 1):
             segm2 = ps2[j1:j1 + 2]
             if bb_overlap(get_bounding_box(segm1), get_bounding_box(segm2)):
-                print("found bbOverlap")
                 p = getCrossing0(segm1, segm2)
-                if p:
+                if len(p) != 0:
                     return p  # Return the intersection point if found.
 
     return p  # Return an empty list if no intersection is found.
