@@ -168,7 +168,7 @@ while modus != quitModus:
 
 			if int(input('is it ok to save (0/1) ')):
 				# If changes have been made, adds crosspoints into the image
-				if changesMade: 
+				if 1:#changesMade: 
 					print('img %d, adding the crosspoints' % k)
 					imgs[k]['corners'] = get_corners(imgs[k]['pss'])
 				print('saving img %d' % k)

@@ -1,5 +1,9 @@
 import numpy as np
 
+from getBoundingBox import get_bounding_box 
+from getCrossing0 import getCrossing0
+from bbOverlap import bb_overlap
+
 def getCrossing(ps1, ps2, p0):
     """
     Finds the intersection point(s) of two curves (ps1 and ps2) closest to p0.
@@ -18,9 +22,9 @@ def getCrossing(ps1, ps2, p0):
         for j1 in range(n2 - 1):
             segm2 = ps2[j1:j1 + 2]
 
-            if bbOverlap(getBB(segm1), getBB(segm2)):
+            if bb_overlap(get_bounding_box(segm1), get_bounding_box(segm2)):
                 pFound = getCrossing0(segm1, segm2)
-                if pFound is not None:
+                if len(pFound) != 0: # is not None:
                     p.append(pFound)
                     counter += 1
 
@@ -31,13 +35,3 @@ def getCrossing(ps1, ps2, p0):
         return p[closest_index]
 
     return []
-
-# Placeholder functions for bbOverlap, getBB, and getCrossing0
-def bbOverlap(bb1, bb2):
-    pass
-
-def getBB(segment):
-    pass
-
-def getCrossing0(segm1, segm2):
-    pass

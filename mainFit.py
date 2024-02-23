@@ -2,13 +2,14 @@ import pickle
 from networkx import is_empty
 import numpy as np
 import matplotlib.pyplot as plt
+import os.path
 
 from fitCSC1 import fit_csc1
 from getCSCpointsAndCSCerror import get_CSC_points
 from getCrossing2 import getCrossing
 from getOris import getNewOris
 from mapPixels import map_pixels
-import os.path
+
 
 # 1) Initial values for the map
 # 1.1) Size of the frames
@@ -82,7 +83,6 @@ for k in range(2,3):  # 3 images
         
         for i in range(1, nCurves):
             ps = pss1[i]['ps']
-            #print(ps)
             plt.plot(ps[:, 0], ps[:, 1], 'bo')
             ps = pss2[i-1]['ps']
             if ps.size != 0:
@@ -109,21 +109,24 @@ for k in range(2,3):  # 3 images
             CSCs[i] = [aPixel[0], aPixel[1], h, ori]
 
     # 2.4) Record corner points of CSCs
+    print('Recording corner pointsof CSCs...')
     for i in range(len(imgs1[k]['corners'])):
         p1 = imgs1[k]['corners'][i]['p']
         j1j2 = imgs1[k]['corners'][i]['curves']
-        j1, j2 = j1j2[0], j1j2[1]
+        j1, j2 = j1j2[0]-1, j1j2[1]-1
         p2 = getCrossing(pss3[j1]['ps'], pss3[j2]['ps'], p1)  # Assuming getCrossing2 exists
-        if p2:
+        
+        if len(p2) != 0:
             counterV += 1
             vs[counterV, :] = [p1[1], p1[0], p2[1] - p1[1], p2[0] - p1[0]]
 
 vs = vs[:counterV, :]
 
 # 3) Construct the vector field (from corner points to corner points)
+print('Drawing the vector field...')
 plt.figure(1)
 plt.clf()
-plt.quiver(vs[:, 0], vs[:, 1], vs[:, 2], vs[:, 3], scale=0.1)
+plt.quiver(vs[:, 0], vs[:, 1], vs[:, 2], vs[:, 3])#, scale=0.1)
 plt.axis('equal')
 plt.xlabel('i')
 plt.ylabel('j')
