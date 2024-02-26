@@ -46,7 +46,7 @@ counterV = 0
 # each ori category has to be unique
 usedOris = []
 
-for k in range(2,3):  # 3 images
+for k in range(0,3):  # 3 images
     pss1 = imgs1[k]['pss']
     nCurves = len(pss1)  # raw image chessboard border curves
 
