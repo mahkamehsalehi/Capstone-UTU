@@ -18,7 +18,7 @@ fOut = 'data/pixelMap.npy'
 v = np.loadtxt(fIn) #  v == <<p1, v(p1)>,...> where v(p1)= p2 - p1
 #ps1, vs12 = v[:, :2], v[:, 2:] # ps1 = points, vs12 = vector field
 
-# Initialize lense constants (vakiot in Finnish)
+# Initialize lense constants
 # r12,r21 mappings
 rMax = 677
 thetaMax = (90 + 20) / 180 * np.pi
@@ -31,13 +31,8 @@ r21 = lambda r2: np.sin(r2 / b) / a
 
 ##############################
 # Get frame size ni x nj
-data_file = 'data/imgs.pkl'
-#data_file = scipy.io.loadmat(fIn)
+data_file = 'data/checkerboard_imgs.pkl'
 data_dict_names = []
-
-'''for name,value in data_file.items():
-    data_dict_names.append(name)
-imgs1 = np.array(data_file[data_dict_names[-1]])'''
 
 if (os.path.exists(data_file)):
 	with open(data_file, 'rb') as f:
@@ -50,13 +45,13 @@ else:
 	    pickle.dump(imgs, f)
 plt.imshow(imgs[0]['img1']) 
 plt.show()
-#imgs1 = np.load(data, allow_pickle=True) # The original one
-sz = np.array(imgs[0]['img1']).shape #['img1'].shape
+
+sz = np.array(imgs[0]['img1']).shape
 ni, nj = sz[0], sz[1]
 ##############################
 
 # Set hyperparameters
-lambda_val = 0.5 # The degree of Fourier truncation
+lambda_val = 0.5 #0.7 # The degree of Fourier truncation
 bumpR = 20.0 # Support width of the radial function (pixels)
 
 
@@ -74,8 +69,19 @@ L0, _, _, _ = get_adjacency_matrix(tris.simplices, ps1, l0)
 D, V = np.linalg.eig(L0)
 lambdas = np.diag(D)
 Vn = V[:, :nEigen]
-# Smoothed vector field us12 (regularized vector field in Paavo's words)(it's based on Laplacian matrix)
+# Regularized vector field (it's based on Laplacian matrix)
 us12 = Vn @ Vn.T @ vs12
+
+# Show regularized vector field
+print('Drawing the vector field...')
+plt.figure(1)
+plt.clf()
+plt.quiver(ps1[:, 0], ps1[:, 1], us12[:, 0], us12[:, 1])#, scale=0.1)
+plt.axis('equal')
+plt.xlabel('i')
+plt.ylabel('j')
+plt.title('Pixel Mapping Vector Field')
+plt.show()
 
 # Generalization to all pixes in img1 (the view circle)
 # qs = pixel coordinates = view area pixels
@@ -103,27 +109,64 @@ ds, inds2 = neigh.kneighbors(qs)
 ws = bump(ds / bumpR) # ws = weights, A bump function based on the distances
 
 ws = np.nan_to_num(ws, nan = 0.0)
-for k in range(nq):
-    ws[k, :] = ws[k, :] / np.sum(ws[k, :])
 
+
+for col in range(4):
+    for row in range(nq):
+        #ws[k, 3] = np.array([ws[k, 0] / np.sum(ws[k, 0:4]), ws[k, 1] / np.sum(ws[k, 0:4]), ws[k, 2] / np.sum(ws[k, 0:4]), ws[k, 3] / np.sum(ws[k, 0:4])])
+        #ws[k, 2] = np.array([ws[k, 0] / np.sum(ws[k, 0:3]), ws[k, 1] / np.sum(ws[k, 0:3]), ws[k, 2] / np.sum(ws[k, 0:3])])
+        #ws[k, 1] = np.array([ws[k, 0] / np.sum(ws[k, 0:2]), ws[k, 1] / np.sum(ws[k, 0:2])])
+        #ws[k, 0] = np.array([ws[k, 0] / np.sum(ws[k, 0])])
+        ws[row, col] = np.divide(ws[row, col], np.sum(ws[row, col]))
+
+
+#np.divide(ws[:,k], np.sum(ws[:,k]))
 ws = np.nan_to_num(ws, nan = 0.0)
+
+# Delete the following 2 rows when not needed anymore
+uni, counts= np.unique(np.round(ws,3), return_counts=True)
 
 # Visualize the distribution of distances and weights in two subplots
 if True:
     # A plot to tune bumpR
-    fig, axs = plt.subplots(1, 2)
-    axs[0].boxplot(ds)
-    axs[0].set_yscale('log')
-    axs[0].set_xlabel('k')
-    axs[0].set_ylabel('||v(p)||')
-    axs[0].set_title('Distance to k nearest pixel neighbors')
-
-    axs[1].boxplot(ws)
-    #axs[1].set_yscale('log')
-    axs[1].set_xlabel('k')
-    axs[1].set_ylabel('w')
-    axs[1].set_title('Weight w of nearest pixel neighbors')
-
+    # A plot for showing the distances
+    plt.boxplot(ds)
+    plt.yscale('log')
+    plt.xlabel('k')
+    plt.ylabel('||v(p)||')
+    plt.title('Distance to k nearest pixel neighbors')
     plt.show()
+    
+    # A plot for showing the weights with different k values
+    fig, axs = plt.subplots(2, 2)
+    fig.suptitle('Weight w of nearest pixel neighbors')
+    i = 0
+
+    for col in range(4):
+        weights_for_diff_k = np.zeros((nq, col+1))
+        for row in range(nq):
+            weights_for_diff_k[row, :col+1] = np.divide(ws[row, :col+1], np.sum(ws[row, :col+1]))
+        col_copy = col
+        if col == 0 or col == 1:
+            i = 0
+            axs[i, col].boxplot(weights_for_diff_k)
+            #axs[1].set_yscale('log')
+            axs[i, col].set_xlabel('k:th neighbor')
+            axs[i, col].set_ylabel('weights')
+            axs[i, col].set_title('{} neighbors'.format(col))
+        else:
+            i = 1
+            if col == 2:
+                 col_copy = 0
+            else:
+                 col_copy = 1
+            print(i, col_copy)
+            axs[i, col_copy].boxplot(weights_for_diff_k)
+            #axs[1].set_yscale('log')
+            axs[i, col_copy].set_xlabel('k:th neighbor')
+            axs[i, col_copy].set_ylabel('weights')
+            axs[i, col_copy].set_title('{} neighbors'.format(col))
+    plt.show()
+
 # Save results
 np.save(fOut, {'inds1': inds1, 'inds2': inds2, 'ws': ws})
