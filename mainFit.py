@@ -36,18 +36,22 @@ y_values = []
 rMax_values = []
 total_errors_from_runs = []
 total_minimum_errors_from_runs = []
+best_run_vs = None
+best_run_index = -1
+best_run_total_error = float('inf')
+best_run_counter_v = None
 
-# 3) Build the vector field v(p)
-vs = np.zeros((1000, 4))
-counterV = 0
 
-for x_coord in x_coordinates:
+for run_index,x_coord in enumerate(x_coordinates):
 
     for y_coord in y_coordinates:
 
         c = np.array([x_coord, y_coord])
         print("Testing with center pixel:", c)  
         for rMax in range(674, 681):
+            # 3) Build the vector field v(p)
+            vs = np.zeros((1000, 4))
+            counterV = 0
             x_values.append(x_coord)
             y_values.append(y_coord)
             rMax_values.append(rMax)
@@ -64,7 +68,7 @@ for x_coord in x_coordinates:
             minimum_error = float('inf')
             usedOris = []
 
-            for k in range(0,3):  # 3 images
+            for k in range(0,3):  # 3 imagesw
                 pss1 = imgs1[k]['pss']
                 nCurves = len(pss1)  # raw image chessboard border curves
 
@@ -121,7 +125,7 @@ for x_coord in x_coordinates:
                     ori = pss2[i]['ori']
 
                     if ps.size != 0:
-                        aPixel, h, e, l, flag = fit_csc1(ps)
+                        aPixel, h, e, l, flag = fit_csc1(ps,rMax=rMax,c=c)
                         print("Error: ",e)
                         total_error += e
                         minimum_error = min(minimum_error, e)  
@@ -133,23 +137,39 @@ for x_coord in x_coordinates:
                 total_errors_from_runs.append(total_error)
                 total_minimum_errors_from_runs.append(minimum_error)
 
-                # 2.4) Record corner points of CSCs
-                print('Recording corner pointsof CSCs...')
-                for i in range(len(imgs1[k]['corners'])):
-                    p1 = imgs1[k]['corners'][i]['p']
-                    j1j2 = imgs1[k]['corners'][i]['curves']
-                    j1, j2 = j1j2[0]-1, j1j2[1]-1
-                    p2 = getCrossing(pss3[j1]['ps'], pss3[j2]['ps'], p1)  
-                    
-                    if len(p2) != 0:
-                        counterV += 1
-                        vs[counterV, :] = [p1[1], p1[0], p2[1] - p1[1], p2[0] - p1[0]]
+                if total_error < best_run_total_error:
+                    best_run_total_error = total_error
+                    best_run_index = run_index
+                    best_run_vs = np.copy(vs)
+
+                    # 2.4) Record corner points of CSCs
+                    # Comment this section out if you want to run this faster.
+                    print('Recording corner pointsof CSCs...')
+                    for i in range(len(imgs1[k]['corners'])):
+                        p1 = imgs1[k]['corners'][i]['p']
+                        j1j2 = imgs1[k]['corners'][i]['curves']
+                        j1, j2 = j1j2[0]-1, j1j2[1]-1
+                        p2 = getCrossing(pss3[j1]['ps'], pss3[j2]['ps'], p1)  
+
+                        if len(p2) != 0:
+                            # Access the vs array and store the values
+
+                            best_run_vs[counterV, :] = [p1[1], p1[0], p2[1] - p1[1], p2[0] - p1[0]]
+
+                            # Increment counterV
+                            counterV += 1
+                    if total_error < best_run_total_error:
+                        best_run_counter_v = counterV
 
 # 2) Go through images and fit GCs
 # 2.1) ori = 1,2,3 in each image, but in the collection of images,
 # each ori category has to be unique
+                       
+# Use the vs from the best run
 
-vs = vs[:counterV, :]
+vs = best_run_vs
+
+vs = vs[:best_run_counter_v, :]
 
 # 3) Construct the vector field (from corner points to corner points)
 print('Drawing the vector field...')
