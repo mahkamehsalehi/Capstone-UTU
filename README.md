@@ -1,3 +1,7 @@
+<p align="center">
+  <img  src="https://apps.utu.fi/media/logo/UTU_logo_EN_RGB_white.png" />
+</p>
+
 ![F.I.S.H](https://github.com/mahkamehsalehi/Capstone-UTU/blob/main/Images-for-readme/fish.png?raw=true)
 # F.I.S.H. 
 University of Turku Capstone course fall 2023 group 2
