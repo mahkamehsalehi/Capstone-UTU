@@ -15,6 +15,6 @@ The primary objective of F.I.S.H. is to democratize the use of fisheye cameras b
 ## Installation
 1. Clone the repository `git clone https://github.com/mahkamehsalehi/Capstone-UTU.git`.
 2. Navigate to the cloned repository `cd Capstone-UTU`.
-3. Install requiered Python packages with `pip install -r requirements.txt`
+3. Install required Python packages with `pip install -r requirements.txt`
 
 
