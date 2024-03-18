@@ -48,7 +48,9 @@ for run_index,x_coord in enumerate(x_coordinates):
 
         c = np.array([x_coord, y_coord])
         print("Testing with center pixel:", c)  
-        for rMax in range(674, 681):
+        for i in range(675, 681):
+            rMax = i
+            i+=1
             # 3) Build the vector field v(p)
             vs = np.zeros((1000, 4))
             counterV = 0
@@ -67,6 +69,9 @@ for run_index,x_coord in enumerate(x_coordinates):
             total_error = 0
             minimum_error = float('inf')
             usedOris = []
+            smalles_error_found = False
+            print("\n \n current rMax",rMax,"\n\n")
+            print("\n current errors",total_errors_from_runs,"\n\n")
 
             for k in range(0,3):  # 3 imagesw
                 pss1 = imgs1[k]['pss']
@@ -75,6 +80,7 @@ for run_index,x_coord in enumerate(x_coordinates):
                 # 2.2) Ori category uniqueness management
                 allOris, uniqueOris = getNewOris(pss1)  # Assuming getOris exists
                 nLen = len(uniqueOris)
+                error_in_image = 0
 
                 for i in range(nLen):
                     uniqueOri = uniqueOris[i]
@@ -113,7 +119,8 @@ for run_index,x_coord in enumerate(x_coordinates):
                     plt.xlabel('i')
                     plt.ylabel('j')
                     plt.title('Pixel Mapping')
-                    plt.show()
+                    # Remove the comment from pls.show() if you want to see the plots, commented out so that this can run unsupervised
+                    #plt.show()
 
                 # 2.3) Find individual GCs
                 CSCs = np.zeros((nCurves-1, 4))  # <<aPixel, ori>, ...>
@@ -127,38 +134,41 @@ for run_index,x_coord in enumerate(x_coordinates):
                     if ps.size != 0:
                         aPixel, h, e, l, flag = fit_csc1(ps,rMax=rMax,c=c)
                         print("Error: ",e)
-                        total_error += e
-                        minimum_error = min(minimum_error, e)  
+                        total_error += e  
                         cps = get_CSC_points(aPixel, h)  
                         pss3[i]['ps'] = cps
                         pss3[i]['ori'] = ori
                         CSCs[i] = [aPixel[0], aPixel[1], h, ori]
-
+                error_in_image = total_error
                 total_errors_from_runs.append(total_error)
-                total_minimum_errors_from_runs.append(minimum_error)
+                print("Collected errors:", total_errors_from_runs)
 
-                if total_error < best_run_total_error:
+                if total_error <= min(total_errors_from_runs):
+                    smalles_error_found = True
                     best_run_total_error = total_error
                     best_run_index = run_index
                     best_run_vs = np.copy(vs)
 
                     # 2.4) Record corner points of CSCs
                     # Comment this section out if you want to run this faster.
+                if smalles_error_found:
                     print('Recording corner pointsof CSCs...')
                     for i in range(len(imgs1[k]['corners'])):
                         p1 = imgs1[k]['corners'][i]['p']
                         j1j2 = imgs1[k]['corners'][i]['curves']
                         j1, j2 = j1j2[0]-1, j1j2[1]-1
                         p2 = getCrossing(pss3[j1]['ps'], pss3[j2]['ps'], p1)  
-
                         if len(p2) != 0:
                             # Access the vs array and store the values
-
-                            best_run_vs[counterV, :] = [p1[1], p1[0], p2[1] - p1[1], p2[0] - p1[0]]
-
+                            if total_error <= min(total_errors_from_runs):
+                                best_run_vs[counterV, :] = [p1[1], p1[0], p2[1] - p1[1], p2[0] - p1[0]]
+                                counterV += 1
+                            else:
+                                vs[counterV, :] = [p1[1], p1[0], p2[1] - p1[1], p2[0] - p1[0]]
+                                counterV += 1
                             # Increment counterV
-                            counterV += 1
-                    if total_error < best_run_total_error:
+                           
+                    if total_error <= min(total_errors_from_runs):
                         best_run_counter_v = counterV
 
 # 2) Go through images and fit GCs
@@ -186,7 +196,7 @@ plt.show()
 np.savetxt('./data/v.txt', vs)
 
 print("Total errors from runs:", total_errors_from_runs)
-print("Total minimum errors from runs:", total_minimum_errors_from_runs)
+print("Total minimum errors from runs:", min(total_errors_from_runs))
 print("X values:", x_values)
 print("Y values:", y_values)
 print("rMax values:", rMax_values)

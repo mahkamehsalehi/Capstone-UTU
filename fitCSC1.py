@@ -45,7 +45,7 @@ def fit_csc1(ps,rMax, c):
 
     # 2) minimization of e
     x0 = np.concatenate([a_pixel, [h]])
-    x = fmin(fun_adapter, x0, args=(ps,), disp=True, maxiter=300, ftol=1.0)
+    x = fmin(fun_adapter, x0, args=(ps,), disp=False, maxiter=300, ftol=1.0) # Change disp to True if you want to see the logs from this function
     a_pixel = x[:2]
     h = x[2]
 
