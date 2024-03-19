@@ -48,7 +48,7 @@ for run_index,x_coord in enumerate(x_coordinates):
 
         c = np.array([x_coord, y_coord])
         print("Testing with center pixel:", c)  
-        for i in range(675, 681):
+        for i in range(678, 681):
             rMax = i
             i+=1
             # 3) Build the vector field v(p)
