@@ -22,4 +22,14 @@ The primary objective of F.I.S.H. is to democratize the use of fisheye cameras b
 2. Navigate to the cloned repository `cd Capstone-UTU`.
 3. Install required Python packages with `pip install -r requirements.txt`
 
+## Usage
+
+To use the software you must run 4 separate scripts that can all be found at the root level of the repository.
+Once you have cloned the repository and installed the required packages follow these steps in your terminal:
+1. Run `python mainEditCurves.py`
+2. Run `python mainFit.py`
+3. Run `python mainMapping.py`
+4. Run `python mainProcessFrames.py`
+
+
 
