@@ -51,7 +51,7 @@ ni, nj = sz[0], sz[1]
 ##############################
 
 # Set hyperparameters
-lambda_val = 0.5 #0.7 # The degree of Fourier truncation
+lambda_val = 0.5 # The degree of Fourier truncation, other values to try: 0.7 and 0.9
 bumpR = 20.0 # Support width of the radial function (pixels)
 
 
