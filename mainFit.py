@@ -1,5 +1,4 @@
 import pickle
-from networkx import is_empty
 import numpy as np
 import matplotlib.pyplot as plt
 import os.path
@@ -23,7 +22,7 @@ else:
     print('Run mainEditCurves.m first (to get the marker groups done)')
     exit()
 
-# Global variables
+# variables and initializations
 rMax = 677  # (pix) range of pixels from 674 to 680
 thetaMax = (90 + 20) / 180 * np.pi  # (rad)
 a = np.sin(thetaMax / 2) / rMax
@@ -132,10 +131,10 @@ for run_index,x_coord in enumerate(x_coordinates):
                     ori = pss2[i]['ori']
 
                     if ps.size != 0:
-                        aPixel, h, e, l, flag = fit_csc1(ps,rMax=rMax,c=c)
+                        aPixel, h, e, l, flag = fit_csc1(ps,rMax=rMax,c=c,thetaMax=thetaMax)
                         print("Error: ",e)
                         total_error += e  
-                        cps = get_CSC_points(aPixel, h)  
+                        cps = get_CSC_points(aPixel, h, rMax=rMax, c=c, thetaMax=thetaMax)  
                         pss3[i]['ps'] = cps
                         pss3[i]['ori'] = ori
                         CSCs[i] = [aPixel[0], aPixel[1], h, ori]
@@ -151,8 +150,8 @@ for run_index,x_coord in enumerate(x_coordinates):
 
                     # 2.4) Record corner points of CSCs
                     # Comment this section out if you want to run this faster.
-                if smalles_error_found:
-                    print('Recording corner pointsof CSCs...')
+                '''if smalles_error_found:
+                    print('Recording corner points of CSCs...')
                     for i in range(len(imgs1[k]['corners'])):
                         p1 = imgs1[k]['corners'][i]['p']
                         j1j2 = imgs1[k]['corners'][i]['curves']
@@ -169,7 +168,7 @@ for run_index,x_coord in enumerate(x_coordinates):
                             # Increment counterV
                            
                     if total_error <= min(total_errors_from_runs):
-                        best_run_counter_v = counterV
+                        best_run_counter_v = counterV'''
 
 # 2) Go through images and fit GCs
 # 2.1) ori = 1,2,3 in each image, but in the collection of images,

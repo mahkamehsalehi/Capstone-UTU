@@ -2,7 +2,7 @@
 import numpy as np  # Importing Numpy for numerical operations
 from scipy.spatial import cKDTree  # Importing SciPy's KDTree for nearest neighbour search
 
-def get_CSC_points(aPixel, h):
+def get_CSC_points(aPixel, h, rMax, c, thetaMax):
     """
     Function to generate the Cone Spherical Coordinates (CSC) points in a 3D unit sphere.
 
@@ -13,11 +13,6 @@ def get_CSC_points(aPixel, h):
     Returns:
         ps (numpy array): Corresponding pixel coordinates on 3D unit sphere CSC
     """
-
-    # Global variables
-    rMax = 677  # (pix)
-    thetaMax = (90 + 20) / 180 * np.pi  # (rad)
-    c = np.array([994, 712])  # [712,994]  # center pixel
 
     aPixel = aPixel - c  # Subtract mean pixel location from input pixel location
     r = np.linalg.norm(aPixel)  # Compute Euclidean distance (r) of pixel from origin
@@ -68,7 +63,7 @@ def get_CSC_points(aPixel, h):
 
     return ps  # Return pixel coordinates on CSC
 
-def get_CSC_error(aPixel, h, ps):
+def get_CSC_error(aPixel, h, ps, rMax, c, thetaMax):
     """
     Function to compute the error in converting a given set of pixels from image space to Cone Spherical Coordinates (CSC).
 
@@ -82,7 +77,7 @@ def get_CSC_error(aPixel, h, ps):
         l (int): Number of pixels in original image space
     """
 
-    cps = get_CSC_points(aPixel, h)  # Generate CSC points for given input pixel coordinates
+    cps = get_CSC_points(aPixel, h, rMax=rMax, c=c, thetaMax=thetaMax)  # Generate CSC points for given input pixel coordinates
 
     tree = cKDTree(cps)  # Construct KDTree from CSC points
     ds, _ = tree.query(ps, k=1)  # Compute distances of original pixels to nearest neighbour in CSC

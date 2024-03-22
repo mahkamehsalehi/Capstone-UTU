@@ -7,7 +7,7 @@ from rndUnitDiskP import rnd_unit_disk_p
 
 #!!!Requires densify_curve, rnd_unit_disk_p, get_csc_error and fun_adapter functions!!!
 
-def fit_csc1(ps,rMax, c):
+def fit_csc1(ps,rMax, c, thetaMax):
 
 
     # 0) densify close to the pixel size
@@ -24,7 +24,7 @@ def fit_csc1(ps,rMax, c):
     for _ in range(n_tries):
         a_pixel = c + rnd_unit_disk_p() * rMax
         h = 0.0
-        e, l = get_CSC_error(a_pixel, h, ps)
+        e, l = get_CSC_error(a_pixel, h, ps, rMax, c, thetaMax)
 
         if e < e_min:
             e_min = e
@@ -45,7 +45,7 @@ def fit_csc1(ps,rMax, c):
 
     # 2) minimization of e
     x0 = np.concatenate([a_pixel, [h]])
-    x = fmin(fun_adapter, x0, args=(ps,), disp=False, maxiter=300, ftol=1.0) # Change disp to True if you want to see the logs from this function
+    x = fmin(fun_adapter, x0, args=(ps, rMax, c, thetaMax,), disp=False, maxiter=300, ftol=1.0) # Change disp to True if you want to see the logs from this function
     a_pixel = x[:2]
     h = x[2]
 
