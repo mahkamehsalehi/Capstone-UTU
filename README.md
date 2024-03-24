@@ -29,7 +29,17 @@ whole field of view of the fisheye camera would be covered.
 
 ![Checker board](https://github.com/mahkamehsalehi/Capstone-UTU/blob/production/Images-for-readme/checkerboard.png?raw=true)
 
-Assembeled 3D calibration checkerboard
+![Checker board assembled](https://github.com/mahkamehsalehi/Capstone-UTU/blob/production/Images-for-readme/checkerboard2.png?raw=true)
+
+Assembled 3D calibration checkerboard
+
+![Checker board corner supports](https://github.com/mahkamehsalehi/Capstone-UTU/blob/production/Images-for-readme/checkerboard3.png?raw=true)
+
+Two-slotted corner support for the center and side corners.
+
+![Checker board front corner supports](https://github.com/mahkamehsalehi/Capstone-UTU/blob/production/Images-for-readme/checkerboard4.png?raw=true)
+
+A support to level the front-facing lower corner.
 
 
 ## Features
@@ -49,3 +59,37 @@ Once you have cloned the repository and installed the required packages follow t
 2. Run `python mainFit.py`
 3. Run `python mainMapping.py`
 4. Run `python mainProcessFrames.py`
+
+## Known issues
+
+* mainFit optimizes fitting error for single frame and not set of three frames.
+* mainFit calculates fitting errors on a frame-by-frame basis to optimize hyperparameters, when errors should be calculated for each set of three frames to compare hyperparameter performance. This causes the parameter optimization to be overly optimistic as the first frame seems to consistently have the lowest error. Proposed fix is to sum the errors from each of the three frames in order to have a valid point of comparison between hyperparameters.
+* Corner point registration in mainFit is currently done when a frame has the smallest total error that has been found thus far. Because the first frame consistently has lower error than frames 2 and 3, corner point registration is done only for frame 1 if its total error is the smallest so far. This causes the resulting vector field to be much more sparse as only one image’s correction vectors are collected. Proposed fix is to implement the summing errors from each set of frames as described in the previous known bug and calculate corner point registration for each frame in the current minimum error set of frames.
+* Weights calculated in the mainMapping are not calculated correctly. Their sum is 1 as it should be but the weights itself are the same number. For example, for four pixels the weights are all 0.25 and for two pixels the weights are 0.5. This can be seen especially well from the weight boxplots the mainMapping prints. The weights are needed for moving the pixels to their calibrated places. The problem probably arises from the bump function so it should be checked out.
+* The pixel mapping operation which is done in mainProcessFrames is currently faulty. The issue is known to be caused by bad indexing of the pixel mapping operation between lines 51 and 55 of mainProcessFrames. This causes the mapped video to look like noisy static. Proposed fix is to investigate the indexing operations in the previously mentioned lines and correct the faulty indexing.
+
+## Improvements
+
+* **Automatic Detection of Corner Points:**
+  - Corner points are currently registered by hand in `mainEditCurves.py`. This is a very labor-intensive and time-consuming process, because registering the corner points in one image takes an hour or more, depending on the registerer’s proficiency and number and severity of image imperfections. Still, the software benefits heavily from a large number of registered corner points for more accurate corrections. Therefore, the registration of corner points should be automated. There are existing implementations of automatic corner point registration that can be used as a basis for the implementation.
+
+* **mainFit calculates unnecessary crossing point registrations:**
+  - The most computationally intensive part of `mainFit.py` is the crossing point registration. Currently, this is done every time a frame has the smallest error so far. This means that corner point registration could theoretically be done 45 times with the current hyperparameter optimization. This should only ever need to be done 3 times, once for each of the frames in the input set with the optimized hyperparameters. Suggested fix is to move the corner point registration outside of the hyperparameter optimization loop and save optimized hyperparameters and other required data that are used in corner point registration.
+
+* **Optimizing truncation parameter lambda or exploring other regularization methods:**
+  - The software currently uses Fourier truncation to deal with outliers in the vector field. The degree of this truncation is governed by a single constant value. To reach a better level of truncation this parameter should be included into the hyperparameter optimization process in `mainFit`. This would allow the system to better eliminate outliers in the vector field. If Fourier truncation is found to be an inefficient method for regularization, more sophisticated methods of regularization should be implemented and optimized.
+
+* **Improving quality of code for better readability:**
+  - The naming of methods and variables can be extremely confusing at the moment. To improve readability, the commenting and naming conventions of variables and methods should be improved.
+
+## Future work
+
+* **Cloning and Expanding the Git Repository:**
+  - The existing repository should be cloned and expanded to match the level required by an academic research project. This repository will be unaltered for preservation purposes.
+
+* **Coding an execution pipeline:**
+  - Currently, the code needs to be run as individual main methods. To make the software more user-friendly, an execution pipeline should be created to provide the user with a less arduous user experience.
+
+
+
+
