@@ -13,6 +13,21 @@ Fisheye Image Software Handling (F.I.S.H.) is a tool designed by Group 2 of the 
 ## Purpose
 The primary objective of F.I.S.H. is to democratize the use of fisheye cameras by providing a cost-effective solution for obtaining high-quality fisheye image data. By leveraging Python scripts and a systematic calibration process, this software allows users to achieve professional-grade results without the need for expensive camera gear. This also enables some mobile usecases that are not possible to do with more expensive gear due to the weight and size limitations of some of these applications, such as drone footage.
 
+## 3D Checkerboard for fisheye camera calibration
+A three-faced calibration grid with a checkerboard pattern was used in the fisheye camera calibration
+process. Commonly a 2-dimensional grid is used, but here a 3D version was required to ensure the
+whole field of view of the fisheye camera would be covered.
+
+| Specification       | 3 x 3 checkers | 10 x 10 checkers |
+|---------------------|----------------|------------------|
+| Target Type         | Checkerboard   | Checkerboard     |
+| Board Width [mm]    | 600            | 600              |
+| Board Height [mm]   | 600            | 600              |
+| Rows                | 20             | 10               |
+| Columns             | 20             | 10               |
+| Checker Width [mm]  | 30             | 60               |
+
+
 ## Features
 ## Prerequisites
 * Python 3.10 or newer
