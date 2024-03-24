@@ -41,8 +41,6 @@ Two-slotted corner support for the center and side corners.
 
 A support to level the front-facing lower corner.
 
-
-## Features
 ## Prerequisites
 * Python 3.10 or newer
 * Video taken with a fisheye camera of a calibration checkerboard
@@ -55,10 +53,10 @@ A support to level the front-facing lower corner.
 
 To use the software you must run 4 separate scripts that can all be found at the root level of the repository.
 Once you have cloned the repository and installed the required packages follow these steps in your terminal:
-1. Run `python mainEditCurves.py`
-2. Run `python mainFit.py`
-3. Run `python mainMapping.py`
-4. Run `python mainProcessFrames.py`
+1. Run `python mainEditCurves.py`. This first step is where corner point registeration is done. Currently this is manual labor and takes quite some time.
+3. Run `python mainFit.py`
+4. Run `python mainMapping.py`
+5. Run `python mainProcessFrames.py`
 
 ## Known issues
 
