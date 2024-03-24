@@ -27,6 +27,10 @@ whole field of view of the fisheye camera would be covered.
 | Columns             | 20             | 10               |
 | Checker Width [mm]  | 30             | 60               |
 
+![Checker board](https://github.com/mahkamehsalehi/Capstone-UTU/blob/production/Images-for-readme/checkerboard.png?raw=true)
+
+Assembeled 3D calibration checkerboard
+
 
 ## Features
 ## Prerequisites
