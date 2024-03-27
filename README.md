@@ -43,7 +43,7 @@ A support to level the front-facing lower corner.
 
 ## Prerequisites
 * Python 3.10 or newer
-* Video taken with a fisheye camera of a calibration checkerboard saved in a folder named data at the root of the cloned repository. File should be named printteri.mov as default. This can be changed from get3images.py.
+* Video taken with a fisheye camera of a calibration checkerboard saved in a folder named data at the root of the cloned repository. File should be named printteri.mov as default. This can be changed from `get3Imgs.py`.
 ## Installation
 1. Clone the repository `git clone https://github.com/mahkamehsalehi/Capstone-UTU.git`.
 2. Navigate to the cloned repository `cd Capstone-UTU`.
